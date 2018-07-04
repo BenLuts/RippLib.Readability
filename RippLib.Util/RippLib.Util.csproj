@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <RootNamespace>_2</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="RippLib.Util.Tests\**" />
+    <EmbeddedResource Remove="RippLib.Util.Tests\**" />
+    <None Remove="RippLib.Util.Tests\**" />
+  </ItemGroup>
+
+</Project>
