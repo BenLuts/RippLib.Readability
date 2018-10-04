@@ -20,6 +20,7 @@ namespace RippLib.Util.Tests
             var list = SimplePoco.CreateDummyList(200);
             var dic = list.CreateDictionaryFromSinglePropertyValues(x => x.ID);
             Assert.NotNull(dic);
+            Assert.True(dic.ContainsKey(0.ToString()));
         }
         [Fact]
         public void TestShuffle()
