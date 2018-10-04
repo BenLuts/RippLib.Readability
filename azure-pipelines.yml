@@ -41,7 +41,7 @@ steps:
   displayName: 'NuGet pack'
   inputs:
     command: pack
-    packagesToPack: '**/RippLib.Util.csproj'
+    packagesToPack: '**/*.nuspec'
     configuration: Release
 
 - task: PublishBuildArtifacts@1
