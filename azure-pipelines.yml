@@ -30,19 +30,10 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-
 - task: VSTest@2
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-
-
-- task: NuGetCommand@2
-  displayName: 'NuGet pack'
-  inputs:
-    command: pack
-    packagesToPack: '**/*.nuspec'
-    configuration: Release
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
