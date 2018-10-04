@@ -41,8 +41,8 @@ steps:
   displayName: 'NuGet pack'
   inputs:
     command: pack
+    packagesToPack: **/RippLib.Util.csproj
     configuration: Release
-
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
