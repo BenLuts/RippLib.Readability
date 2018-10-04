@@ -41,9 +41,6 @@ steps:
   displayName: 'NuGet pack'
   inputs:
     command: pack
-
-    packagesToPack: RippLib.Util/RippLib.Util.csproj
-
     configuration: Release
 
 
