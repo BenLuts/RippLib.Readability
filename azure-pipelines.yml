@@ -47,6 +47,6 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
   inputs:
-    PathtoPublish: 'RippLib.Util.0.0.0.1.nupkg'
+    PathtoPublish: $(Build.ArtifactStagingDirectory)
 
 
