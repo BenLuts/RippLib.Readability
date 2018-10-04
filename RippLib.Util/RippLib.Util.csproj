@@ -6,6 +6,12 @@
     <AssemblyVersion>0.0.0.1</AssemblyVersion>
     <FileVersion>0.0.0.1</FileVersion>
     <Version>0.0.0.1</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Ben Luts</Authors>
+    <Description>Package with some common utilities I use frequently</Description>
+    <Copyright>Ben Luts</Copyright>
+    <PackageLicenseUrl>https://github.com/BenLuts/RippLib.Util/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/BenLuts/RippLib.Util</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
