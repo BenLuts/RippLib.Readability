@@ -29,5 +29,13 @@ namespace RippLib.Util.Tests
             var shuffledList = list.Shuffle().ToList();
             Assert.True(list.Count == shuffledList.Count && list[0].ID != shuffledList[0].ID);
         }
+        [Fact]
+        public void TestBatch()
+        {
+            var list = SimplePoco.CreateDummyList(20);
+            var batchList = list.Batch(2).ToList();
+            Assert.True(batchList.Count == 10);
+            batchList.ForEach(x => Assert.True(x.Count() == 2));
+        }
     }
 }
