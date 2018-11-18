@@ -1,8 +1,9 @@
 language: csharp
 solution: RippLib.Util.sln
 install:
-  - nuget RippLib.Util.sln
+  - curl -L -o nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+  - mono nuget.exe restore RippLib.Util.sln
   - nuget install xunit.runners -Version 1.9.2 -OutputDirectory testrunner
 script:
-  - xbuild /p:Configuration=Release RippLib.Util.sln
+  - xbuild /p:Configuration=Release [SolutionName].sln
   - mono ./testrunner/xunit.runners.1.9.2/tools/xunit.console.clr4.exe ./RippLib.Util.Tests/bin/Release/RippLib.Util.Tests.dll
