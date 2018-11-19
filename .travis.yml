@@ -2,9 +2,6 @@ language: csharp
 mono: none
 dotnet: 2.1.500
 solution: RippLib.Util.sln
-install:
-  - curl -L -o nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
-  - mono nuget.exe restore RippLib.Util.sln
 script:
   - dotnet restore
   - msbuild /p:Configuration=Release RippLib.Util.sln
