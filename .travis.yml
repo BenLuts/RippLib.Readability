@@ -10,5 +10,6 @@ script:
   - msbuild /p:Configuration=Release RippLib.Util.sln
   - dotnet build ./RippLib.Util.Tests/RippLib.Util.Tests.csproj -c Release
   - dotnet test ./RippLib.Util.Tests/RippLib.Util.Tests.csproj
-  - dotnet pack ./RippLib.Util/RippLib.Util.csproj
-  - dotnet nuget push RippLib.Util/bin/Release/RippLib.Util.*.nupkg -k $NUGET_API_KEY -s $NUGET_SOURCE
+  - mono nuget.exe pack ./RippLib.Util/obj/Release/RippLib.Util.*.nuspec
+  - mono nuget.exe setApiKey $NUGET_API_KEY -Source $NUGET_SOURCE -Verbosity quiet
+  - mono nuget.exe push RippLib.Util.*.nupkg -Source $NUGET_SOURCE
