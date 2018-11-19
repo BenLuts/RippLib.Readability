@@ -9,6 +9,6 @@ script:
   - dotnet restore
   - msbuild /p:Configuration=Release RippLib.Util.sln
   - dotnet test RippLib.Util.sln
-  - mono nuget.exe pack ./RippLib.Util/obj/Release/RippLib.Util.*.nuspec
-  - mono nuget.exe setApiKey $NUGET_API_KEY -Source $NUGET_SOURCE -Verbosity quiet
-  - mono nuget.exe push RippLib.Util.*.nupkg -Source $NUGET_SOURCE
+  - dotnet pack ./RippLib.Util/obj/Release/RippLib.Util.*.nuspec
+  - dotnet setApiKey $NUGET_API_KEY -Source $NUGET_SOURCE -Verbosity quiet
+  - dotnet push RippLib.Util.*.nupkg -Source $NUGET_SOURCE
