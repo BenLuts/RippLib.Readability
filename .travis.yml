@@ -7,5 +7,4 @@ script:
   - dotnet build -c Release
   - dotnet test RippLib.Util.sln
   - dotnet pack ./RippLib.Util/obj/Release/RippLib.Util.*.nuspec
-  - dotnet setApiKey $NUGET_API_KEY -Source $NUGET_SOURCE -Verbosity quiet
-  - dotnet push RippLib.Util.*.nupkg -Source $NUGET_SOURCE
+  - dotnet nuget push RippLib.Util.*.nupkg -k $NUGET_API_KEY -s $NUGET_SOURCE
