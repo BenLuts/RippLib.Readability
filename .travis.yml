@@ -4,7 +4,7 @@ dotnet: 2.1.500
 solution: RippLib.Util.sln
 script:
   - dotnet restore
-  - msbuild /p:Configuration=Release RippLib.Util.sln
+  - dotnet build -c Release
   - dotnet test RippLib.Util.sln
   - dotnet pack ./RippLib.Util/obj/Release/RippLib.Util.*.nuspec
   - dotnet setApiKey $NUGET_API_KEY -Source $NUGET_SOURCE -Verbosity quiet
