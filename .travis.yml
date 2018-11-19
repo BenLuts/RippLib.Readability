@@ -3,10 +3,9 @@ solution: RippLib.Util.sln
 install:
   - curl -L -o nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
   - mono nuget.exe restore RippLib.Util.sln
-  - nuget install xunit.runners -Version 1.9.2 -OutputDirectory testrunner
 script:
   - msbuild /p:Configuration=Release RippLib.Util.sln
-  - mono ./testrunner/xunit.runners.1.9.2/tools/xunit.console.clr4.exe ./RippLib.Util.Tests/bin/Release/netcoreapp2.1/RippLib.Util.Tests.dll
+  - mono ./testrunner/xunit.runners.*/tools/xunit.console.clr4.exe ./RippLib.Util.Tests/bin/Release/netcoreapp2.1/RippLib.Util.Tests.dll
   - mono nuget.exe pack ./RippLib.Util/obj/Release/RippLib.Util.*.nuspec
   - mono nuget.exe setApiKey $NUGET_API_KEY -Source $NUGET_SOURCE -Verbosity quiet
   - mono nuget.exe push RippLib.Util.*.nupkg -Source $NUGET_SOURCE
