@@ -12,6 +12,8 @@
     <Copyright>Ben Luts</Copyright>
     <PackageLicenseUrl>https://github.com/BenLuts/RippLib.Util/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/BenLuts/RippLib.Util</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/BenLuts/RippLib.Util</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
