@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Dynamic;
 using System.Linq;
-using System.Text;
 
 namespace RippLib.Util.Extensions
 {
@@ -106,7 +105,7 @@ namespace RippLib.Util.Extensions
             public override bool IsReadOnly => false;
 
             public override Type ComponentType => null;
-            
+
 
             public override bool CanResetValue(object component)
             {
@@ -140,7 +139,7 @@ namespace RippLib.Util.Extensions
         {
             var defaultDescriptor = base.GetTypeDescriptor(objectType, instance);
 
-            return instance == null ? defaultDescriptor :
+            return instance is null ? defaultDescriptor :
                 new ExpandoObjectTypeDescriptor(instance);
         }
     }
