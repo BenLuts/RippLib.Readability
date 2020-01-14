@@ -8,10 +8,10 @@ namespace RippLib.Util
 {
     public static class CollectionUtil
     {
-        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> list)
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> collection)
         {
             var rnd = new Random();
-            List<T> shuffledList = list.ToList();
+            var shuffledList = collection.ToList();
             var n = shuffledList.Count;
             while (n > 1)
             {
@@ -23,17 +23,15 @@ namespace RippLib.Util
             }
             return shuffledList;
         }
+        [Obsolete("Use Linq ToDictionary instead")]
         public static Dictionary<string, T> CreateDictionaryFromSinglePropertyValues<T>(this IEnumerable<T> collection,
-            Expression<Func<T, object>> propertyLambda)
+            Func<T, string> propertyLambda)
         {
-            Dictionary<string, List<T>> propertyMultipleDic = collection.CreateDictionaryFromPropertyValues(propertyLambda);
-            var propertySingleDic = new Dictionary<string, T>();
-            foreach (var key in propertyMultipleDic.Keys)
-                propertySingleDic[key] = propertyMultipleDic[key][0];
-            return propertySingleDic;
+            var dic = collection.ToDictionary(propertyLambda);
+            return dic;
         }
         public static Dictionary<string, List<T>> CreateDictionaryFromPropertyValues<T>(this IEnumerable<T> collection,
-            Expression<Func<T,object>> propertyLambda)
+            Expression<Func<T, object>> propertyLambda)
         {
             if (!(propertyLambda.Body is MemberExpression me))
             {
@@ -52,13 +50,13 @@ namespace RippLib.Util
                 var key = "";
 
                 var pi = listEnumerator.Current.GetType().GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-                if ((pi == null) && (listEnumerator.Current.GetType().BaseType != null))
+                if ((pi is null) && !(listEnumerator.Current.GetType().BaseType is null))
                 {
                     pi = listEnumerator.Current.GetType().BaseType.GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
                 }
                 var propOrFieldValue = pi.GetValue(listEnumerator.Current, null);
                 //add the value of the property or field to the key
-                if (propOrFieldValue != null)
+                if (!(propOrFieldValue is null))
                     key = propOrFieldValue.ToString();
                 //add the current object to the dictionary
                 if (!propertyDic.ContainsKey(key)) propertyDic[key] = new List<T>();
