@@ -23,6 +23,7 @@ namespace RippLib.Util
             }
             return shuffledList;
         }
+
         [Obsolete("Use Linq ToDictionary instead")]
         public static Dictionary<string, T> CreateDictionaryFromSinglePropertyValues<T>(this IEnumerable<T> collection,
             Func<T, string> propertyLambda)
@@ -30,6 +31,7 @@ namespace RippLib.Util
             var dic = collection.ToDictionary(propertyLambda);
             return dic;
         }
+
         public static Dictionary<string, List<T>> CreateDictionaryFromPropertyValues<T>(this IEnumerable<T> collection,
             Expression<Func<T, object>> propertyLambda)
         {
@@ -64,6 +66,7 @@ namespace RippLib.Util
             }
             return propertyDic;
         }
+
         public static IEnumerable<IEnumerable<T>> Batch<T>(this IEnumerable<T> collection, int batchSize)
         {
             var nextbatch = new List<T>(batchSize);
@@ -78,6 +81,23 @@ namespace RippLib.Util
             }
             if (nextbatch.Count > 0)
                 yield return nextbatch;
+        }
+
+        public static bool NotEmpty<T>(this IEnumerable<T> list)
+        {
+            return list is not null && list.Any();
+        }
+        public static bool NotEmpty<T>(this IEnumerable<T> list, Func<T, bool> query)
+        {
+            return list is not null && list.Any(query);
+        }
+        public static bool Empty<T>(this IEnumerable<T> list)
+        {
+            return list is null || !list.Any();
+        }
+        public static bool Empty<T>(this IEnumerable<T> list, Func<T, bool> query)
+        {
+            return list is null || !list.Any(query);
         }
     }
 }
