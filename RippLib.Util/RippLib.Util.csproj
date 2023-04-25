@@ -1,25 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net4.0;netstandard2.0</TargetFrameworks>
-    <RootNamespace>RippLib.Util</RootNamespace>
-    <AssemblyVersion>0.0.0.5</AssemblyVersion>
-    <FileVersion>0.0.0.5</FileVersion>
-    <Version>0.0.0.5</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>Ben Luts</Authors>
-    <Description>Package with some common utilities I use frequently</Description>
-    <Copyright>Ben Luts</Copyright>
-    <PackageLicense>https://github.com/BenLuts/RippLib.Util/blob/master/LICENSE</PackageLicense>
-    <PackageProjectUrl>https://github.com/BenLuts/RippLib.Util</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/BenLuts/RippLib.Util</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net6.0;net7.0;netstandard2.0;netstandard2.1</TargetFrameworks>
+		<LangVersion>latest</LangVersion>
+		<RootNamespace>RippLib.Util</RootNamespace>
+		<AssemblyVersion>0.0.0.6</AssemblyVersion>
+		<FileVersion>0.0.0.6</FileVersion>
+		<Version>0.0.0.6</Version>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Authors>Ben Luts</Authors>
+		<Description>Package with some common utilities I use frequently</Description>
+		<Copyright>Ben Luts</Copyright>
+		<PackageLicense>https://github.com/BenLuts/RippLib.Util/blob/master/LICENSE</PackageLicense>
+		<PackageProjectUrl>https://github.com/BenLuts/RippLib.Util</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/BenLuts/RippLib.Util</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="RippLib.Util.Tests\**" />
-    <EmbeddedResource Remove="RippLib.Util.Tests\**" />
-    <None Remove="RippLib.Util.Tests\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="RippLib.Util.Tests\**" />
+		<EmbeddedResource Remove="RippLib.Util.Tests\**" />
+		<None Remove="RippLib.Util.Tests\**" />
+	</ItemGroup>
 
 </Project>
