@@ -12,17 +12,8 @@ namespace RippLib.Util.Tests
         public void TestDictionaryExtension()
         {
             var list = SimplePoco.CreateDummyList(200);
-            var dic = list.CreateDictionaryFromPropertyValues(x=>x.CharSequence);
+            var dic = list.CreateDictionaryFromPropertyValues(x => x.CharSequence);
             Assert.NotNull(dic);
-        }
-
-        [Fact]
-        public void TestDictionarySinglePropertyExtension()
-        {
-            var list = SimplePoco.CreateDummyList(200);
-            var dic = list.CreateDictionaryFromSinglePropertyValues(x => x.ID.ToString());
-            Assert.NotNull(dic);
-            Assert.True(dic.ContainsKey(0.ToString()));
         }
 
         [Fact]

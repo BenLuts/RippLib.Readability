@@ -17,25 +17,16 @@ namespace RippLib.Util
             {
                 n--;
                 var k = rnd.Next(n + 1);
-                var value = shuffledList[k];
-                shuffledList[k] = shuffledList[n];
-                shuffledList[n] = value;
+                (shuffledList[n], shuffledList[k]) = (shuffledList[k], shuffledList[n]);
             }
             return shuffledList;
         }
 
-        [Obsolete("Use Linq ToDictionary instead")]
-        public static Dictionary<string, T> CreateDictionaryFromSinglePropertyValues<T>(this IEnumerable<T> collection,
-            Func<T, string> propertyLambda)
-        {
-            var dic = collection.ToDictionary(propertyLambda);
-            return dic;
-        }
-
+        [Obsolete("Use LINQ ToLookUp instead")]
         public static Dictionary<string, List<T>> CreateDictionaryFromPropertyValues<T>(this IEnumerable<T> collection,
             Expression<Func<T, object>> propertyLambda)
         {
-            if (!(propertyLambda.Body is MemberExpression me))
+            if (propertyLambda.Body is not MemberExpression me)
             {
                 var ubody = (UnaryExpression)propertyLambda.Body;
                 me = ubody.Operand as MemberExpression;
@@ -52,13 +43,13 @@ namespace RippLib.Util
                 var key = "";
 
                 var pi = listEnumerator.Current.GetType().GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-                if ((pi is null) && !(listEnumerator.Current.GetType().BaseType is null))
+                if (pi is null && listEnumerator.Current.GetType().BaseType is not null)
                 {
                     pi = listEnumerator.Current.GetType().BaseType.GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
                 }
                 var propOrFieldValue = pi.GetValue(listEnumerator.Current, null);
                 //add the value of the property or field to the key
-                if (!(propOrFieldValue is null))
+                if (propOrFieldValue is not null)
                     key = propOrFieldValue.ToString();
                 //add the current object to the dictionary
                 if (!propertyDic.ContainsKey(key)) propertyDic[key] = new List<T>();
