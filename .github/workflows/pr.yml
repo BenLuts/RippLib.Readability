@@ -10,11 +10,14 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v4
     
+    - name: .net
+      uses: actions/
+
     - name: Setup .NET 4.6.2
       uses: actions/setup-dotnet@v4
       with:
