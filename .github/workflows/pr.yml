@@ -14,9 +14,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    
-    - name: .net
-      uses: actions/
 
     - name: Setup .NET 4.6.2
       uses: actions/setup-dotnet@v4
