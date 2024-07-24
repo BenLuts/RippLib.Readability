@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net7.0;netstandard2.0;netstandard2.1</TargetFrameworks>
-		<LangVersion>latest</LangVersion>
+		<TargetFrameworks>net6.0;net8.0;netstandard2.0;netstandard2.1</TargetFrameworks>
+        <LangVersion>Latest</LangVersion>
 		<RootNamespace>RippLib.Util</RootNamespace>
-		<AssemblyVersion>0.0.0.6</AssemblyVersion>
-		<FileVersion>0.0.0.6</FileVersion>
-		<Version>0.0.0.6</Version>
+		<AssemblyVersion>0.0.0.7</AssemblyVersion>
+		<FileVersion>0.0.0.7</FileVersion>
+		<Version>0.0.0.7</Version>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Authors>Ben Luts</Authors>
-		<Description>Package with some common utilities I use frequently</Description>
+		<Description>Package with some extensions to make code display intent and more readable</Description>
 		<Copyright>Ben Luts</Copyright>
 		<PackageLicense>https://github.com/BenLuts/RippLib.Util/blob/master/LICENSE</PackageLicense>
 		<PackageProjectUrl>https://github.com/BenLuts/RippLib.Util</PackageProjectUrl>
