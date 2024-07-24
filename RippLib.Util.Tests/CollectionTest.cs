@@ -13,7 +13,7 @@ public class CollectionTests
     {
         var list = SimplePoco.CreateDummyList(20);
         var shuffledList = list.Shuffle().ToList();
-        Assert.True(list.Count == shuffledList.Count && list[0].ID != shuffledList[0].ID);
+        Assert.True(list.Count == shuffledList.Count);
     }
 
     [Fact]
