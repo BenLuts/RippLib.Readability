@@ -22,7 +22,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\RippLib.Util\RippLib.Util.csproj" />
+		<ProjectReference Include="..\RippLib.Readability\RippLib.Readability.csproj" />
 	</ItemGroup>
 
 </Project>

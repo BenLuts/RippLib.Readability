@@ -16,11 +16,4 @@
 		<RepositoryUrl>https://github.com/BenLuts/RippLib.Util</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<Compile Remove="RippLib.Util.Tests\**" />
-		<EmbeddedResource Remove="RippLib.Util.Tests\**" />
-		<None Remove="RippLib.Util.Tests\**" />
-	</ItemGroup>
-
 </Project>
