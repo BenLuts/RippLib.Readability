@@ -1,15 +1,15 @@
-# RippLib.Readibility
+# RippLib.Readability
 Small library with usefull methods that help display intent in code & keep it more readable and clear.
 
 To install use NuGet package manager or 
 ```
-dotnet add package RippLib.Readibility
+dotnet add package RippLib.Readability
 ```
 
-All extentions reside in the RippLib.Readibility namespace.
+All extentions reside in the RippLib.Readability namespace.
 If you are using Global Usings simply add 
 ```
-RippLib.Readibility
+RippLib.Readability
 ```
 
 ## Current available methods:
