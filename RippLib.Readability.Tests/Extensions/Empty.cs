@@ -6,9 +6,9 @@ using System.Linq;
 using Xunit;
 using RippLib.Readability;
 
-namespace RippLib.Util.Tests;
+namespace Extensions;
 
-public class EmptyTests
+public class Empty
 {
     public class Lists
     {
