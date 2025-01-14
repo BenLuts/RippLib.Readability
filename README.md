@@ -17,13 +17,28 @@ RippLib.Readability
 ```
 .Empty()
 ```
-Same usage as Linq .Any(), also excepts a lambda expression. Has build in null check.
+Checks if a collection is null or contains no elements. Uses optimized checks if the collection is of type List or Array.
 Instead of writing if (myCollection == null || !myCollection.Any()) use if (myCollection.Empty())
+
+```
+.Has()
+```
+Direct replacement for LINQ .Any method, accepts a Lambda expression, has a build in NULL check.
 
 ```
 .NotEmpty()
 ```
-Same usage as Linq .Any(), also excepts a lambda expression. Has build in null check.
+Checks if a list is not null and has at least one element. Uses optimized checks if the collection is of type List or Array.
 Instead of writing if (myCollection != null || myCollection.Any()) use if (myCollection.NotEmpty())
+
+```
+.HasNo()
+```
+Direct replacement for LINQ !.Any method, accepts a Lambda expression, has a build in NULL check.
+
+```
+.HasBeenCanceled()
+```
+More readable method that wraps checks for Task Cancelation.
 
 [![Release to NuGet](https://github.com/BenLuts/RippLib.Readability/actions/workflows/release.yml/badge.svg)](https://github.com/BenLuts/RippLib.Readability/actions/workflows/release.yml)

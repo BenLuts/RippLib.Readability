@@ -6,9 +6,9 @@ using System.Linq;
 using Xunit;
 using RippLib.Readability;
 
-namespace RippLib.Util.Tests;
+namespace Enumerables;
 
-public class NotEmptyTests
+public class NotEmpty
 {
     public class Lists
     {
@@ -41,22 +41,6 @@ public class NotEmptyTests
         {
             var listWithValues = new List<object>() { new(), new() };
             var result = listWithValues.NotEmpty();
-            result.Should().BeTrue();
-        }
-
-        [Fact]
-        public void Searching_for_non_existing_value_should_return_false()
-        {
-            var listWithValues = new List<string>() { "not so empty string", "another not so empty string" };
-            var result = listWithValues.NotEmpty(x => x.StartsWith("none existing value"));
-            result.Should().BeFalse();
-        }
-
-        [Fact]
-        public void Searching_for_existing_value_should_return_true()
-        {
-            var listWithValues = new List<string>() { "not so empty string", "another not so empty string" };
-            var result = listWithValues.NotEmpty(x => x.StartsWith("not"));
             result.Should().BeTrue();
         }
     }
@@ -102,22 +86,6 @@ public class NotEmptyTests
             var result = arrayWithValues.NotEmpty();
             result.Should().BeTrue();
         }
-
-        [Fact]
-        public void Searching_for_non_existing_value_should_return_false()
-        {
-            var arrayWithValues = new string[2] { "not so empty string", "another not so empty string" };
-            var result = arrayWithValues.NotEmpty(x => x.StartsWith("none existing value"));
-            result.Should().BeFalse();
-        }
-
-        [Fact]
-        public void Searching_for_existing_value_should_return_true()
-        {
-            var arrayWithValues = new string[2] { "not so empty string", "another not so empty string" };
-            var result = arrayWithValues.NotEmpty(x => x.StartsWith("not"));
-            result.Should().BeTrue();
-        }
     }
 
     public class Enumerable
@@ -143,22 +111,6 @@ public class NotEmptyTests
         {
             var enumerableWithValues = new Collection<object>() { new(), new() }.AsEnumerable();
             var result = enumerableWithValues.NotEmpty();
-            result.Should().BeTrue();
-        }
-
-        [Fact]
-        public void Searching_for_non_existing_value_should_return_false()
-        {
-            var enumerableWithValues = new Collection<string>() { "not so empty string", "another not so empty string" }.AsEnumerable();
-            var result = enumerableWithValues.NotEmpty(x => x.StartsWith("none existing value"));
-            result.Should().BeFalse();
-        }
-
-        [Fact]
-        public void Searching_for_existing_value_should_return_true()
-        {
-            var enumerableWithValues = new List<string>() { "not so empty string", "another not so empty string" }.AsEnumerable();
-            var result = enumerableWithValues.NotEmpty(x => x.StartsWith("not"));
             result.Should().BeTrue();
         }
     }
