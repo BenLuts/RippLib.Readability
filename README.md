@@ -36,4 +36,9 @@ Instead of writing if (myCollection != null || myCollection.Any()) use if (myCol
 ```
 Direct replacement for LINQ !.Any method, accepts a Lambda expression, has a build in NULL check.
 
+```
+.HasBeenCanceled()
+```
+More readable method that wraps checks for Task Cancelation.
+
 [![Release to NuGet](https://github.com/BenLuts/RippLib.Readability/actions/workflows/release.yml/badge.svg)](https://github.com/BenLuts/RippLib.Readability/actions/workflows/release.yml)
