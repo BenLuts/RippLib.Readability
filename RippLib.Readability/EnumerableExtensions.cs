@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,7 +7,14 @@ namespace RippLib.Readability;
 
 public static class EnumerableExtensions
 {
-    public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> collection)
+    /// <summary>
+    /// Shuffles a collection using the default Random class.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="collection"></param>
+    /// <returns>A list containing the shuffled elements</returns>
+    /// <remarks>Don't use in cryptograpic scenario's</remarks>
+    public static List<T> Shuffle<T>(this IEnumerable<T> collection)
     {
         var rnd = new Random();
         var shuffledList = collection.ToList();
@@ -21,7 +29,14 @@ public static class EnumerableExtensions
         return shuffledList;
     }
 
-    public static IEnumerable<IEnumerable<T>> Batch<T>(this IEnumerable<T> collection, int batchSize)
+    /// <summary>
+    /// Splits a collection into batches of a specified size.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="collection"></param>
+    /// <param name="batchSize"></param>
+    /// <returns>An enumerable of lists. Each list containing a single batch</returns>
+    public static IEnumerable<List<T>> Batch<T>(this IEnumerable<T> collection, int batchSize)
     {
         var nextbatch = new List<T>(batchSize);
         foreach (var item in collection)
@@ -83,7 +98,7 @@ public static class EnumerableExtensions
     /// <param name="enumerable">The enumerable to check</param>
     /// <param name="query">Linq expression to query</param>
     /// <returns>True if there is atleast one matching element in the enumerable, otherwise false</returns>
-    public static bool NotEmpty<T>(this IEnumerable<T> enumerable, Func<T, bool> query)
+    public static bool Has<T>(this IEnumerable<T> enumerable, Func<T, bool> query)
     {
         return enumerable is not null && enumerable.Any(query);
     }
@@ -128,8 +143,7 @@ public static class EnumerableExtensions
     /// <param name="enumerable"></param>
     /// <param name="query">Linq expression to query</param>
     /// <returns>True if null or when the query returns no results</returns>
-    /// <remarks>Will return True even if the enumerable contains data. We only look at the query results</remarks>
-    public static bool Empty<T>(this IEnumerable<T> enumerable, Func<T, bool> query)
+    public static bool HasNo<T>(this IEnumerable<T> enumerable, Func<T, bool> query)
     {
         return enumerable is null || !enumerable.Any(query);
     }

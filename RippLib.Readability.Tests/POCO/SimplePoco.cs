@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RippLib.Util.Tests.POCO;
+namespace POCO;
 
 public class SimplePoco
 {

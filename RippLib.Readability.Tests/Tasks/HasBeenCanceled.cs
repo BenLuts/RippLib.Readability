@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using RippLib.Util;
+using RippLib.Readability;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
