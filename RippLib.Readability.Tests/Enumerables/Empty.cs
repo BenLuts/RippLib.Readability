@@ -6,11 +6,7 @@ using System.Linq;
 using Xunit;
 using RippLib.Readability;
 
-<<<<<<<< HEAD:RippLib.Readability.Tests/Extensions/Empty.cs
-namespace Extensions;
-========
 namespace Enumerables;
->>>>>>>> master:RippLib.Readability.Tests/Enumerables/Empty.cs
 
 public class Empty
 {

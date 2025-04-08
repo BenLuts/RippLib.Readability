@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis;
 
-namespace Analyzers;
+namespace Analyzers.Internals;
 
 internal static class CompilationExtensions
 {

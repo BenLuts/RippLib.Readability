@@ -1,101 +1,46 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Operations;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace Analyzers;
 
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public sealed class PreferEmptyOverNotAnyAnalyzer : DiagnosticAnalyzer
+public class PreferEmptyOverNotAnyAnalyzer : DiagnosticAnalyzer
 {
-    private static readonly DiagnosticDescriptor _useEmptyInsteadOfNotAny = new(
-    RuleIdentifiers.UseEmptyOverAny,
-    title: "Use 'Empty()' instead of 'Any()'",
-    messageFormat: "Use 'Empty()' instead of 'Any()'",
-    "Readability",
-    DiagnosticSeverity.Warning,
-    isEnabledByDefault: true,
-    description: "");
+    public const string DiagnosticId = "ANY001";
+    private static readonly LocalizableString _title = "Avoid using the Linq Any method";
+    private static readonly LocalizableString _messageFormat = "Use .Empty() instead of Any()";
+    private static readonly LocalizableString _description = "The Empty() method is more readable and has a build in NULL check.";
+    private const string Category = "Readability";
 
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => [_useEmptyInsteadOfNotAny];
+    private static readonly DiagnosticDescriptor _rule = new(
+        DiagnosticId, _title, _messageFormat, Category, DiagnosticSeverity.Error, isEnabledByDefault: true, description: _description);
+
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => [_rule];
 
     public override void Initialize(AnalysisContext context)
     {
-        context.EnableConcurrentExecution();
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+        context.EnableConcurrentExecution();
 
-        context.RegisterCompilationStartAction(ctx =>
-        {
-            var typeSymbol = ctx.Compilation.GetTypeByMetadataName("RippLib.Readability.EnumerableExtensions");
-            if (typeSymbol == null)
-                return;
-
-            var analyzerContext = new AnalyzerContext(ctx.Compilation);
-            if (analyzerContext.IsValid)
-            {
-                ctx.RegisterOperationAction(analyzerContext.AnalyzeInvocation, OperationKind.Invocation);
-            }
-        });
+        context.RegisterSyntaxNodeAction(AnalyzeInvocation, SyntaxKind.InvocationExpression);
     }
 
-    private sealed class AnalyzerContext
+    private static void AnalyzeInvocation(SyntaxNodeAnalysisContext context)
     {
-        private List<INamedTypeSymbol> ExtensionMethodOwnerTypes { get; } = [];
-        private INamedTypeSymbol? EnumerableSymbol { get; set; }
-        private INamedTypeSymbol? QueryableSymbol { get; set; }
-        private INamedTypeSymbol? ICollectionOfTSymbol { get; set; }
-        private INamedTypeSymbol? ICollectionSymbol { get; set; }
-        private INamedTypeSymbol? IReadOnlyCollectionOfTSymbol { get; set; }
+        var invocation = (InvocationExpressionSyntax)context.Node;
 
-        public bool IsValid => ExtensionMethodOwnerTypes.Count > 0;
+        // Look for method calls named Any.
+        if (invocation.Expression is not MemberAccessExpressionSyntax memberAccess || !memberAccess.Name.ToString().StartsWith("Any"))
+            return;
 
-        public AnalyzerContext(Compilation compilation)
-        {
-            EnumerableSymbol = compilation.GetBestTypeByMetadataName("System.Linq.Enumerable");
-            QueryableSymbol = compilation.GetBestTypeByMetadataName("System.Linq.Queryable");
-            IReadOnlyCollectionOfTSymbol = compilation.GetBestTypeByMetadataName("System.Collections.Generic.IReadOnlyCollection`1");
-            ICollectionOfTSymbol = compilation.GetBestTypeByMetadataName("System.Collections.Generic.ICollection`1");
-            ICollectionSymbol = compilation.GetBestTypeByMetadataName("System.Collections.ICollection");
-            ExtensionMethodOwnerTypes.AddIfNotNull(EnumerableSymbol);
-            ExtensionMethodOwnerTypes.AddIfNotNull(QueryableSymbol);
-        }
+        // Inspect the arguments of the Any method
+        if (invocation.ArgumentList.Arguments.Count > 0)
+            return;
 
-
-        public void AnalyzeInvocation(OperationAnalysisContext context)
-        {
-            var operation = (IInvocationOperation)context.Operation;
-            if (operation.Arguments.Length == 0)
-                return;
-
-            var method = operation.TargetMethod;
-            if (!ExtensionMethodOwnerTypes.Contains(method.ContainingType))
-                return;
-
-            UseEmptyInsteadOfNotAny(context, operation);
-        }
-
-        private void UseEmptyInsteadOfNotAny(OperationAnalysisContext context, IInvocationOperation operation)
-        {
-            if (operation.TargetMethod.Name == "Any" && operation.TargetMethod.ContainingType.IsEqualTo(EnumerableSymbol))
-            {
-                //// Any(_ => true)
-                //if (operation.Arguments.Length >= 2)
-                //    return;
-
-                var operandType = operation.Arguments[0].Value.GetActualType();
-                if (operandType is null)
-                    return;
-
-                var t = (operandType as INamedTypeSymbol).Arity;
-                var implementedInterfaces = operandType.GetAllInterfacesIncludingThis().Select(i => i.OriginalDefinition);
-                if (implementedInterfaces.Any(i => i.IsEqualTo(ICollectionOfTSymbol) || i.IsEqualTo(ICollectionSymbol) || i.IsEqualTo(IReadOnlyCollectionOfTSymbol)))
-                {
-                    context.ReportDiagnostic(PreferEmptyOverNotAnyAnalyzer._useEmptyInsteadOfNotAny, operation);
-                }
-            }
-        }
+        var diagnostic = Diagnostic.Create(_rule, invocation.GetLocation());
+        context.ReportDiagnostic(diagnostic);
     }
-
 }

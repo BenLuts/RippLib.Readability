@@ -17,9 +17,9 @@
 
   
   <ItemGroup>
-      <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
-      <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
-      <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" PrivateAssets="all" />
+      <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" Version="3.11.0" />
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" Version="4.12.0" />
+      <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" PrivateAssets="all" Version="4.12.0" />
   </ItemGroup>
 
   
@@ -27,10 +27,7 @@
     <ProjectReference Include="..\Analyzers\Analyzers.csproj" />
   </ItemGroup>
 
-    <ItemGroup>
-        <Compile Include="$(MSBuildThisFileDirectory)\..\Analyzers\RuleIdentifiers.cs" />
-        <Compile Include="$(MSBuildThisFileDirectory)\..\Analyzers\PreferAnyOverEmptyData.cs" />
-    </ItemGroup>
+    
 
   <ItemGroup>
     <Compile Update="CodeFixResources.Designer.cs" DesignTime="True" AutoGen="True" DependentUpon="CodeFixResources.resx" />

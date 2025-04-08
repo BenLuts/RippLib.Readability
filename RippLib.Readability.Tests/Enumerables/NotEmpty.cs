@@ -6,12 +6,7 @@ using System.Linq;
 using Xunit;
 using RippLib.Readability;
 
-<<<<<<<< HEAD:RippLib.Readability.Tests/Extensions/NotEmpty.cs
-namespace Extensions;
-========
 namespace Enumerables;
->>>>>>>> master:RippLib.Readability.Tests/Enumerables/NotEmpty.cs
-
 public class NotEmpty
 {
     public class Lists

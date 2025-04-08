@@ -2,9 +2,9 @@
 
 namespace Analyzers;
 
-internal static class RuleIdentifiers
+public static class RuleIdentifiers
 {
-    public const string UseEmptyOverAny = "RL0001";
+    public const string PreferEmptyOverNotAny = "ANY001";
     
 
     public static string GetHelpUri(string identifier)

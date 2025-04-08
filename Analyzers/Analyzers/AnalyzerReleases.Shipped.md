@@ -7,5 +7,3 @@
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|--------------------
-RL0001  |  Naming  |  Warning   | RL0001_AnalyzerName, [Documentation](CA1000_Documentation_Link)
-
