@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RippLib.Readability", "Ripp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RippLib.Readability.Tests", "RippLib.Readability.Tests\RippLib.Readability.Tests.csproj", "{259987E5-2C40-4B94-8D9A-4AC4AB8DF68B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RippLib.Readability.EFExtensions", "RippLib.Readability.EFExtensions\RippLib.Readability.EFExtensions.csproj", "{84B9E2E8-2ED5-446A-BA35-93ABF806C4E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RippLib.Readability.EFExtensions.Tests", "RippLib.Readability.EFExtensions.Tests\RippLib.Readability.EFExtensions.Tests.csproj", "{47AF0087-7775-4BC7-8030-4A0FA2CD01A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{259987E5-2C40-4B94-8D9A-4AC4AB8DF68B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{259987E5-2C40-4B94-8D9A-4AC4AB8DF68B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{259987E5-2C40-4B94-8D9A-4AC4AB8DF68B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84B9E2E8-2ED5-446A-BA35-93ABF806C4E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84B9E2E8-2ED5-446A-BA35-93ABF806C4E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84B9E2E8-2ED5-446A-BA35-93ABF806C4E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84B9E2E8-2ED5-446A-BA35-93ABF806C4E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47AF0087-7775-4BC7-8030-4A0FA2CD01A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47AF0087-7775-4BC7-8030-4A0FA2CD01A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47AF0087-7775-4BC7-8030-4A0FA2CD01A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47AF0087-7775-4BC7-8030-4A0FA2CD01A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
