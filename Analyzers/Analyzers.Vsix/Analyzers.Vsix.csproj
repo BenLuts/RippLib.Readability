@@ -15,6 +15,7 @@
         <CopyBuildOutputToOutputDirectory>false</CopyBuildOutputToOutputDirectory>
         <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
         <VSSDKTargetPlatformRegRootSuffix>Roslyn</VSSDKTargetPlatformRegRootSuffix>
+        <CreateVsixContainer Condition=" '$(MSBuildRuntimeType)' == 'Core' ">false</CreateVsixContainer>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.VSSDK.BuildTools" PrivateAssets="all" Version="17.14.2094" />
