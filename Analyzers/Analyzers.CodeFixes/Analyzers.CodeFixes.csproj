@@ -4,27 +4,26 @@
       <TargetFrameworks>net8.0;netstandard2.0</TargetFrameworks>
 
       <IncludeBuildOutput>false</IncludeBuildOutput>
-      <Nullable>enable</Nullable>
       <DebugSymbols>True</DebugSymbols>
       <DebugType>Embedded</DebugType>
       <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
       <BaseOutputPath>bin\$(RoslynVersion)\</BaseOutputPath>
       
-    <!--<IsPackable>false</IsPackable>-->
-    <RootNamespace>Analyzers</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>Analyzers.CodeFixes</RootNamespace>
       <LangVersion>Latest</LangVersion>
   </PropertyGroup>
 
   
   <ItemGroup>
-      <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" Version="3.11.0" />
-      <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" Version="4.12.0" />
-      <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" PrivateAssets="all" Version="4.12.0" />
+      <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" Version="4.14.0" />
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" Version="4.14.0" />
+      <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" PrivateAssets="all" Version="4.14.0" />
   </ItemGroup>
 
   
   <ItemGroup>
-    <ProjectReference Include="..\Analyzers\Analyzers.csproj" />
+    <ProjectReference Include="..\Analyzers\Analyzers.csproj" PrivateAssets="all" />
   </ItemGroup>
 
     

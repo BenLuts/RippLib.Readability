@@ -3,5 +3,6 @@
 
 ### New Rules
 
-Rule ID | Category     | Severity     | Notes
-ANY001  | Readability  | Error        | ANY001_PreventNullWithNotAnyAnalyzer
+Rule ID   | Category     | Severity     | Notes
+RLANY001  | Readability  | Error        | Prefer .NotEmpty() over .Any() (NotEmptyOverAny)
+RLANY002  | Readability  | Error        | Prefer .Empty() over !.Any() (EmptyOverNotAny)

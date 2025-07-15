@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.0</TargetFrameworks>
+        <TargetFramework>netstandard2.0</TargetFramework>
         <IncludeBuildOutput>false</IncludeBuildOutput>
         <IsPackable>false</IsPackable>
 
         <!-- Avoid ID conflicts with the package project. -->
-        <PackageId>*$(MSBuildProjectFile)*</PackageId>
+        <PackageId>$(MSBuildProjectFile)</PackageId>
 
         <GenerateDependencyFile>false</GenerateDependencyFile>
         <developmentDependency>true</developmentDependency>
@@ -24,8 +24,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" Version="3.11.0" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" Version="4.12.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" Version="4.14.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" Version="4.14.0" />
     </ItemGroup>
 
     <ItemGroup>

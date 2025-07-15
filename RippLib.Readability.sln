@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzers", "Analyzers\Anal
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzers.CodeFixes", "Analyzers\Analyzers.CodeFixes\Analyzers.CodeFixes.csproj", "{CBCE367A-1998-4F70-96C5-BD8367B9F9CA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzers.Package", "Analyzers\Analyzers.Package\Analyzers.Package.csproj", "{63137F71-1CFE-4194-AC8F-E8203FACDFB5}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzers.Test", "Analyzers\Analyzers.Test\Analyzers.Test.csproj", "{02C71B02-9DF3-49CF-942B-ED6CE0B6BA58}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzers.Vsix", "Analyzers\Analyzers.Vsix\Analyzers.Vsix.csproj", "{760B9AFD-4217-42F0-8A7E-29F649AC5C9A}"
@@ -20,7 +18,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EF6B0D04-BDAE-44FD-A053-402579D1BE53}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.Targets = Directory.Build.Targets
+		.github\workflows\release.yml = .github\workflows\release.yml
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Package", "Package\Package.csproj", "{BBC12984-2657-4FDE-B3F4-F23737136147}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,10 +45,6 @@ Global
 		{CBCE367A-1998-4F70-96C5-BD8367B9F9CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBCE367A-1998-4F70-96C5-BD8367B9F9CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBCE367A-1998-4F70-96C5-BD8367B9F9CA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{63137F71-1CFE-4194-AC8F-E8203FACDFB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{63137F71-1CFE-4194-AC8F-E8203FACDFB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{63137F71-1CFE-4194-AC8F-E8203FACDFB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{63137F71-1CFE-4194-AC8F-E8203FACDFB5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{02C71B02-9DF3-49CF-942B-ED6CE0B6BA58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{02C71B02-9DF3-49CF-942B-ED6CE0B6BA58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02C71B02-9DF3-49CF-942B-ED6CE0B6BA58}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -56,6 +53,10 @@ Global
 		{760B9AFD-4217-42F0-8A7E-29F649AC5C9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{760B9AFD-4217-42F0-8A7E-29F649AC5C9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{760B9AFD-4217-42F0-8A7E-29F649AC5C9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBC12984-2657-4FDE-B3F4-F23737136147}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBC12984-2657-4FDE-B3F4-F23737136147}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBC12984-2657-4FDE-B3F4-F23737136147}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBC12984-2657-4FDE-B3F4-F23737136147}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

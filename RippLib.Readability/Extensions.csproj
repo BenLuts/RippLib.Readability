@@ -1,19 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net8.0;net9.0;netstandard2.0;netstandard2.1</TargetFrameworks>
+		<TargetFrameworks>net8.0;net9.0;netstandard2.0;netstandard2.1</TargetFrameworks>
         <LangVersion>Latest</LangVersion>
 		<RootNamespace>RippLib.Readability</RootNamespace>
-		<AssemblyVersion>0.0.0.8</AssemblyVersion>
-		<FileVersion>0.0.0.8</FileVersion>
-		<Version>0.0.0.8</Version>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Authors>Ben Luts</Authors>
-		<Description>Package with some extensions to make code display intent and more readable</Description>
-		<Copyright>Ben Luts</Copyright>
-		<PackageLicense>https://github.com/BenLuts/RippLib.Readability/blob/master/LICENSE</PackageLicense>
-		<PackageProjectUrl>https://github.com/BenLuts/RippLib.Readability</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/BenLuts/RippLib.Readability</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
+        <IsPackable>false</IsPackable>
 	</PropertyGroup>
+    
 </Project>

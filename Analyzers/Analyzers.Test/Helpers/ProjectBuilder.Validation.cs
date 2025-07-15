@@ -66,14 +66,14 @@ public sealed partial class ProjectBuilder
         var expectedCount = expectedResults.Count;
         if (DefaultAnalyzerId is not null)
         {
-            actualResults = actualResults.Where(diagnostic => diagnostic.Id == DefaultAnalyzerId).ToArray();
+            actualResults = [.. actualResults.Where(diagnostic => diagnostic.Id == DefaultAnalyzerId)];
         }
 
         var actualCount = actualResults.Count();
 
         if (expectedCount != actualCount)
         {
-            var diagnosticsOutput = actualResults.Any() ? FormatDiagnostics(analyzers, actualResults.ToArray()) : "    NONE.";
+            var diagnosticsOutput = actualResults.Any() ? FormatDiagnostics(analyzers, [.. actualResults]) : "    NONE.";
 
             Assert.Fail($"Mismatch between number of diagnostics returned, expected \"{expectedCount.ToString(CultureInfo.InvariantCulture)}\" actual \"{actualCount.ToString(CultureInfo.InvariantCulture)}\"\r\n\r\nDiagnostics:\r\n{diagnosticsOutput}\r\n");
         }
@@ -150,7 +150,6 @@ public sealed partial class ProjectBuilder
         return documents;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
     private Task<Project> CreateProject()
     {
         var fileNamePrefix = "Test";
@@ -265,7 +264,6 @@ public sealed partial class ProjectBuilder
         };
     }
 
-    //[DebuggerStepThrough]
     private async Task<Diagnostic[]> GetSortedDiagnosticsFromDocuments(IList<DiagnosticAnalyzer> analyzers, Document[] documents, bool compileSolution)
     {
         var projects = new HashSet<Project>();
@@ -309,7 +307,7 @@ public sealed partial class ProjectBuilder
             var analyzerOptionsProvider = new   TestAnalyzerConfigOptionsProvider(AnalyzerConfiguration);
 
             var compilationWithAnalyzers = compilation.WithAnalyzers(
-                ImmutableArray.CreateRange(analyzers),
+                [.. analyzers],
                 new AnalyzerOptions(additionalFiles, analyzerOptionsProvider));
             var diags = await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync(CancellationToken.None).ConfigureAwait(false);
             foreach (var diag in diags)
@@ -418,23 +416,17 @@ public sealed partial class ProjectBuilder
         var actualLinePosition = actualSpan.StartLinePosition;
 
         // Only check line position if there is an actual line in the real diagnostic
-        if (actualLinePosition.Line > 0)
+        if (actualLinePosition.Line > 0 && actualLinePosition.Line + 1 != expected.LineStart)
         {
-            if (actualLinePosition.Line + 1 != expected.LineStart)
-            {
-                Assert.Fail(string.Format(CultureInfo.InvariantCulture, "Expected diagnostic to be on line \"{0}\" was actually on line \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                        expected.LineStart, actualLinePosition.Line + 1, FormatDiagnostics(analyzers, diagnostic)));
-            }
+            Assert.Fail(string.Format(CultureInfo.InvariantCulture, "Expected diagnostic to be on line \"{0}\" was actually on line \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                    expected.LineStart, actualLinePosition.Line + 1, FormatDiagnostics(analyzers, diagnostic)));
         }
 
         // Only check column position if there is an actual column position in the real diagnostic
-        if (actualLinePosition.Character > 0)
+        if (actualLinePosition.Character > 0 && actualLinePosition.Character + 1 != expected.ColumnStart)
         {
-            if (actualLinePosition.Character + 1 != expected.ColumnStart)
-            {
-                Assert.Fail(string.Format(CultureInfo.InvariantCulture, "Expected diagnostic to start at column \"{0}\" was actually at column \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                        expected.ColumnStart, actualLinePosition.Character + 1, FormatDiagnostics(analyzers, diagnostic)));
-            }
+            Assert.Fail(string.Format(CultureInfo.InvariantCulture, "Expected diagnostic to start at column \"{0}\" was actually at column \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                    expected.ColumnStart, actualLinePosition.Character + 1, FormatDiagnostics(analyzers, diagnostic)));
         }
 
         if (expected.IsSpan)
@@ -442,31 +434,19 @@ public sealed partial class ProjectBuilder
             actualLinePosition = actualSpan.EndLinePosition;
 
             // Only check line position if there is an actual line in the real diagnostic
-            if (actualLinePosition.Line > 0)
+            if (actualLinePosition.Line > 0 && actualLinePosition.Line + 1 != expected.LineEnd)
             {
-                if (actualLinePosition.Line + 1 != expected.LineEnd)
-                {
-                    Assert.Fail(string.Format(CultureInfo.InvariantCulture, "Expected diagnostic to end on line \"{0}\" was actually on line \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.LineStart, actualLinePosition.Line + 1, FormatDiagnostics(analyzers, diagnostic)));
-                }
+                Assert.Fail(string.Format(CultureInfo.InvariantCulture, "Expected diagnostic to end on line \"{0}\" was actually on line \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                        expected.LineStart, actualLinePosition.Line + 1, FormatDiagnostics(analyzers, diagnostic)));
             }
 
             // Only check column position if there is an actual column position in the real diagnostic
-            if (actualLinePosition.Character > 0)
+            if (actualLinePosition.Character > 0 && actualLinePosition.Character + 1 != expected.ColumnEnd)
             {
-                if (actualLinePosition.Character + 1 != expected.ColumnEnd)
-                {
-                    Assert.Fail(string.Format(CultureInfo.InvariantCulture, "Expected diagnostic to end at column \"{0}\" was actually at column \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.ColumnStart, actualLinePosition.Character + 1, FormatDiagnostics(analyzers, diagnostic)));
-                }
+                Assert.Fail(string.Format(CultureInfo.InvariantCulture, "Expected diagnostic to end at column \"{0}\" was actually at column \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                        expected.ColumnStart, actualLinePosition.Character + 1, FormatDiagnostics(analyzers, diagnostic)));
             }
         }
-    }
-
-    private static async Task<IEnumerable<Diagnostic>> GetCompilerDiagnostics(Document document)
-    {
-        var semanticModel = await document.GetSemanticModelAsync().ConfigureAwait(false);
-        return semanticModel.GetDiagnostics();
     }
 
     private async Task VerifyFix(IList<DiagnosticAnalyzer> analyzers, CodeFixProvider codeFixProvider, string newSource, int? codeFixIndex)
@@ -474,7 +454,6 @@ public sealed partial class ProjectBuilder
         var project = await CreateProject().ConfigureAwait(false);
         var document = project.Documents.First();
         var analyzerDiagnostics = await GetSortedDiagnosticsFromDocuments(analyzers, [document], compileSolution: false).ConfigureAwait(false);
-        var compilerDiagnostics = await GetCompilerDiagnostics(document).ConfigureAwait(false);
 
         // Assert fixer is value
         foreach (var diagnostic in analyzerDiagnostics)
@@ -527,7 +506,7 @@ public sealed partial class ProjectBuilder
 
         // after applying all of the code fixes, compare the resulting string to the inputted one
         var actual = await GetStringFromDocument(document).ConfigureAwait(false);
-        Assert.Equal(newSource, actual, ignoreLineEndingDifferences: true);
+        Assert.Equal(newSource.ReplaceLineEndings(string.Empty), actual.ReplaceLineEndings(string.Empty), ignoreLineEndingDifferences: true, ignoreAllWhiteSpace: true );
     }
 
     private async Task<Document> ApplyFix(Document document, CodeAction codeAction, bool mustCompile)

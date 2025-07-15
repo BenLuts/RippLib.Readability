@@ -33,11 +33,11 @@ public sealed partial class ProjectBuilder
     public bool IsValidFixCode { get; private set; } = true;
     public LanguageVersion LanguageVersion { get; private set; } = LanguageVersion.Latest;
     public TargetFramework TargetFramework { get; private set; } = TargetFramework.NetStandard2_0;
-    public IList<MetadataReference> References { get; } = new List<MetadataReference>();
-    public IList<string> ApiReferences { get; } = new List<string>();
-    public IList<DiagnosticAnalyzer> DiagnosticAnalyzer { get; } = new List<DiagnosticAnalyzer>();
+    public IList<MetadataReference> References { get; } = [];
+    public IList<string> ApiReferences { get; } = [];
+    public IList<DiagnosticAnalyzer> DiagnosticAnalyzer { get; } = [];
     public CodeFixProvider CodeFixProvider { get; private set; }
-    public IList<DiagnosticResult> ExpectedDiagnosticResults { get; } = new List<DiagnosticResult>();
+    public IList<DiagnosticResult> ExpectedDiagnosticResults { get; } = [];
     public string ExpectedFixedCode { get; private set; }
     public int? CodeFixIndex { get; private set; }
     public bool UseBatchFixer { get; private set; }
@@ -80,7 +80,6 @@ public sealed partial class ProjectBuilder
                 {
                     using var stream = File.OpenRead(dll);
                     using var peFile = new PEReader(stream);
-                    var metadataReader = peFile.GetMetadataReader();
                     result.Add(dll);
                 }
                 catch
@@ -109,7 +108,7 @@ public sealed partial class ProjectBuilder
         var references = GetNuGetReferences(packageName, version, paths).Result;
         foreach (var reference in references)
         {
-            var assembly = Assembly.LoadFrom(reference);
+            var assembly = Assembly.Load(reference);
             foreach (var type in assembly.GetTypes())
             {
                 if (type.IsAbstract || !typeof(DiagnosticAnalyzer).IsAssignableFrom(type))
@@ -158,6 +157,30 @@ public sealed partial class ProjectBuilder
         .AddNuGetReference("System.Runtime.CompilerServices.Unsafe", "4.7.1", "ref/netstandard2.0/");
 
     public ProjectBuilder AddSystemTextJson() => AddNuGetReference("System.Text.Json", "4.7.2", "lib/netstandard2.0/");
+
+    public ProjectBuilder AddRippLibReadabilityReference()
+    {
+        // Find the output path for the Extensions project (RippLib.Readability)
+        // and add it as a MetadataReference if not already present.
+        var baseDir = AppContext.BaseDirectory;
+        var dllName = "RippLib.Readability.dll";
+        var possiblePaths = new[]
+        {
+            Path.Combine(baseDir, dllName),
+            Path.Combine(baseDir, "..","..", "..", "..", "..", "RippLib.Readability", "bin", "Debug", "net8.0", dllName),
+            Path.Combine(baseDir, "..","..", "..", "..", "..", "RippLib.Readability", "bin", "Debug", "net9.0", dllName),
+            Path.Combine(baseDir, "..","..", "..", "..", "..", "RippLib.Readability", "bin", "Debug", "netstandard2.0", dllName),
+        };
+        foreach (var path in possiblePaths)
+        {
+            if (File.Exists(path) && !References.Any(r => r.Display?.EndsWith(dllName) == true))
+            {
+                References.Add(MetadataReference.CreateFromFile(Path.GetFullPath(path)));
+                break;
+            }
+        }
+        return this;
+    }
 
     public ProjectBuilder WithOutputKind(OutputKind outputKind)
     {

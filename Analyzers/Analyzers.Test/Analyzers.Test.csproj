@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-      <TargetFrameworks>net8.0</TargetFrameworks>
+      <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
       <!--<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);net462</TargetFrameworks>-->
       <IsPackable>false</IsPackable>
       <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
       <LangVersion>Latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-      <PackageReference Include="coverlet.collector" Version="6.0.3">
+      <PackageReference Include="coverlet.collector" Version="6.0.4">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       </PackageReference>
@@ -15,18 +15,20 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.12.0" />
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-      <PackageReference Include="System.Reflection.Metadata" Version="9.0.0" />
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing" Version="1.1.2" />
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0" />
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+      <PackageReference Include="System.Formats.Asn1" Version="9.0.7" />
+      <PackageReference Include="System.Reflection.Metadata" Version="9.0.7" />
       <PackageReference Include="xunit" Version="2.9.3" />
-      <PackageReference Include="xunit.runner.visualstudio" Version="3.0.1">
+      <PackageReference Include="xunit.runner.visualstudio" Version="3.1.2">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\RippLib.Readability\Extensions.csproj" />
-    <ProjectReference Include="..\Analyzers.CodeFixes\Analyzers.CodeFixes.csproj" />
-    <ProjectReference Include="..\Analyzers\Analyzers.csproj" />
+    <ProjectReference Include="..\Analyzers.CodeFixes\Analyzers.CodeFixes.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\Analyzers\Analyzers.csproj" PrivateAssets="all" />
   </ItemGroup>
 </Project>
