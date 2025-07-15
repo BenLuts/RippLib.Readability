@@ -7,7 +7,6 @@ using Xunit;
 using RippLib.Readability;
 
 namespace Enumerables;
-
 public class NotEmpty
 {
     public class Lists

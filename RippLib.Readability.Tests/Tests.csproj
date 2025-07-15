@@ -1,20 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net8.0;net9.0;net462;net470;net471;net472;net480;net481</TargetFrameworks>
+		<TargetFrameworks>net8.0;net9.0;net472;net480;net481</TargetFrameworks>
 		<IsPackable>false</IsPackable>
         <LangVersion>Latest</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="FluentAssertions" Version="6.12.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
-		<PackageReference Include="xunit" Version="2.9.0" />
-		<PackageReference Include="xunit.runner.console" Version="2.9.0">
+		<PackageReference Include="FluentAssertions" Version="8.5.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+		<PackageReference Include="xunit" Version="2.9.3" />
+		<PackageReference Include="xunit.runner.console" Version="2.9.3">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.2">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 		</PackageReference>
@@ -22,7 +22,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\RippLib.Readability\RippLib.Readability.csproj" />
+		<ProjectReference Include="..\RippLib.Readability\Extensions.csproj" />
 	</ItemGroup>
 
 </Project>
