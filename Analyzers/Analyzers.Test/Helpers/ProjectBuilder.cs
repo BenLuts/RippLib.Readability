@@ -163,13 +163,14 @@ public sealed partial class ProjectBuilder
         // Find the output path for the Extensions project (RippLib.Readability)
         // and add it as a MetadataReference if not already present.
         var baseDir = AppContext.BaseDirectory;
-        var dllName = "RippLib.Readability.dll";
+        var dllName = "Extensions.dll";
         var possiblePaths = new[]
         {
             Path.Combine(baseDir, dllName),
             Path.Combine(baseDir, "..","..", "..", "..", "..", "RippLib.Readability", "bin", "Debug", "net8.0", dllName),
             Path.Combine(baseDir, "..","..", "..", "..", "..", "RippLib.Readability", "bin", "Debug", "net9.0", dllName),
             Path.Combine(baseDir, "..","..", "..", "..", "..", "RippLib.Readability", "bin", "Debug", "netstandard2.0", dllName),
+            Path.Combine(baseDir, "..","..", "..", "..", "..", "RippLib.Readability", "bin", "Debug", "netstandard2.1", dllName),
         };
         foreach (var path in possiblePaths)
         {
