@@ -127,6 +127,54 @@ public class EmptyOverNotAnyTest
     }
 
     [Fact]
+    public async Task DoesNotTriggerOnNotAnyWithPredicate()
+    {
+        var test = @"
+            using System.Linq;
+
+            class C
+            {
+                void M()
+                {
+                    var numbers = new[] { 1, 2, 3 };
+                    if (!numbers.Any(x => x > 0))
+                    {
+                    }
+                }
+            }";
+
+        await new ProjectBuilder()
+            .WithAnalyzer<EmptyOverNotAny>()
+            .WithSourceCode(test)
+            .ValidateAsync();
+    }
+
+    [Fact]
+    public async Task DoesNotTriggerOnNotAnyWithMethod()
+    {
+        var test = @"
+            using System.Linq;
+
+            class C
+            {
+                void M()
+                {
+                    var numbers = new[] { 1, 2, 3 };
+                    if (!numbers.Any(IsPositive))
+                    {
+                    }
+                }
+
+                bool IsPositive(int x) => x > 0;
+            }";
+
+        await new ProjectBuilder()
+            .WithAnalyzer<EmptyOverNotAny>()
+            .WithSourceCode(test)
+            .ValidateAsync();
+    }
+
+    [Fact]
     public async Task CodeFixReplacesNotAnyWithEmpty()
     {
         var testCode = @"
