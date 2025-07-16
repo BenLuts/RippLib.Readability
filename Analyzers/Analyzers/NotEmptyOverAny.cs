@@ -50,7 +50,8 @@ public class NotEmptyOverAny : DiagnosticAnalyzer
 
         if (methodSymbol.Name == "Any" &&
             methodSymbol.ContainingNamespace.ToDisplayString() == "System.Linq" &&
-            methodSymbol.ContainingType?.Name == "Enumerable")
+            methodSymbol.ContainingType?.Name == "Enumerable" &&
+            methodSymbol.Parameters.Length == 0)
         {
             var diagnostic = Diagnostic.Create(_rule, invocationExpr.GetLocation());
             context.ReportDiagnostic(diagnostic);
