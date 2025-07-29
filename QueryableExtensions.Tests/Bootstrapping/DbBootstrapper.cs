@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RippLib.Readability.EFExtensions.Tests.DB;
 
-namespace RippLib.Readability.EFExtensions.Tests.Bootstrapping;
+namespace RippLib.Readability.QueryableExtensions.Tests.Bootstrapping;
 public sealed class DbBootstrapper
 {
     private readonly DbContextOptions<TestingDbContext> _options;

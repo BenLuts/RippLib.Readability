@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RippLib.Readability.EFExtensions.Tests.DB;
 using RippLib.Readability.EFExtensions.Tests.DB.Entities;
+using RippLib.Readability.QueryableExtensions.Tests.Bootstrapping;
 using System.Threading.Tasks;
 using Testcontainers.MsSql;
 
@@ -28,9 +29,8 @@ public class TestFixture : IAsyncLifetime
 
     protected async Task InitializeDatabaseAsync()
     {
-        var context = GetContext();
+        using var context = GetContext();
         await context.Database.MigrateAsync();
-        await context.DisposeAsync();
     }
 
     public TestingDbContext GetContext()
@@ -41,7 +41,8 @@ public class TestFixture : IAsyncLifetime
     public async Task SeedDatabase()
     {
         using var context = GetContext();
-        context.Products.Add(new Product());
+        var product = new Product();
+        context.Products.Add(product);
         await context.SaveChangesAsync();
     }
 }
