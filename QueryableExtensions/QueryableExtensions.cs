@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
 
-namespace RippLib.Readability.IQueryable;
+namespace RippLib.Readability.EFExtensions;
 
 public static class QueryableExtensions
 {

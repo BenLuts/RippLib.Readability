@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Analyzers.Test.Helpers;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
@@ -172,18 +173,6 @@ public sealed partial class ProjectBuilder
                 AddNuGetReference("Microsoft.NETFramework.ReferenceAssemblies.net48", "1.0.0", "build/.NETFramework/v4.8/");
                 break;
 
-            case TargetFramework.Net5_0:
-                AddNuGetReference("Microsoft.NETCore.App.Ref", "5.0.0", "ref/net5.0/");
-                break;
-
-            case TargetFramework.Net6_0:
-                AddNuGetReference("Microsoft.NETCore.App.Ref", "6.0.10", "ref/net6.0/");
-                break;
-
-            case TargetFramework.Net7_0:
-                AddNuGetReference("Microsoft.NETCore.App.Ref", "7.0.0", "ref/net7.0/");
-                break;
-
             case TargetFramework.Net8_0:
                 AddNuGetReference("Microsoft.NETCore.App.Ref", "8.0.0", "ref/net8.0/");
                 break;
@@ -191,35 +180,11 @@ public sealed partial class ProjectBuilder
             case TargetFramework.Net9_0:
                 AddNuGetReference("Microsoft.NETCore.App.Ref", "9.0.0-preview.4.24266.19", "ref/net9.0/");
                 break;
-
-            case TargetFramework.AspNetCore5_0:
-                AddNuGetReference("Microsoft.NETCore.App.Ref", "5.0.0", "ref/net5.0/");
-                AddNuGetReference("Microsoft.AspNetCore.App.Ref", "5.0.0", "ref/net5.0/");
-                break;
-
-            case TargetFramework.AspNetCore6_0:
-                AddNuGetReference("Microsoft.NETCore.App.Ref", "6.0.10", "ref/net6.0/");
-                AddNuGetReference("Microsoft.AspNetCore.App.Ref", "6.0.10", "ref/net6.0/");
-                break;
-
-            case TargetFramework.AspNetCore7_0:
-                AddNuGetReference("Microsoft.NETCore.App.Ref", "7.0.0", "ref/net7.0/");
-                AddNuGetReference("Microsoft.AspNetCore.App.Ref", "7.0.0", "ref/net7.0/");
-                break;
-
-            case TargetFramework.AspNetCore8_0:
-                AddNuGetReference("Microsoft.NETCore.App.Ref", "8.0.0", "ref/net8.0/");
-                AddNuGetReference("Microsoft.AspNetCore.App.Ref", "8.0.0", "ref/net8.0/");
-                break;
-
-            case TargetFramework.WindowsDesktop5_0:
-                AddNuGetReference("Microsoft.WindowsDesktop.App.Ref", "5.0.0", "ref/net5.0/");
-                break;
         }
 
         AddNuGetReference("System.Collections.Immutable", "1.5.0", "lib/netstandard2.0/");
 
-        if (TargetFramework is not TargetFramework.Net7_0 and not TargetFramework.Net8_0 and not TargetFramework.Net9_0)
+        if (TargetFramework is not TargetFramework.Net8_0 and not TargetFramework.Net9_0)
         {
             AddNuGetReference("System.Numerics.Vectors", "4.5.0", "ref/netstandard2.0/");
         }
@@ -304,7 +269,7 @@ public sealed partial class ProjectBuilder
                 additionalFiles = additionalFiles.AddRange(AdditionalFiles.Select(kvp => new InMemoryAdditionalText(kvp.Key, kvp.Value)));
             }
 
-            var analyzerOptionsProvider = new   TestAnalyzerConfigOptionsProvider(AnalyzerConfiguration);
+            var analyzerOptionsProvider = new TestAnalyzerConfigOptionsProvider(AnalyzerConfiguration);
 
             var compilationWithAnalyzers = compilation.WithAnalyzers(
                 [.. analyzers],
@@ -464,49 +429,29 @@ public sealed partial class ProjectBuilder
             }
         }
 
-        if (UseBatchFixer)
+        for (var i = 0; i < analyzerDiagnostics.Length; ++i)
         {
             var diagnostic = analyzerDiagnostics[0];
-
             var actions = new List<CodeAction>();
             var context = new CodeFixContext(document, diagnostic, (a, _) => actions.Add(a), CancellationToken.None);
             await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
 
-            if (actions.Count > 0)
+            if (actions.Count == 0)
+                break;
+
+            if (codeFixIndex is not null)
             {
-                var action = actions[codeFixIndex ?? 0];
-                var fixAllContext = new FixAllContext(document, codeFixProvider, FixAllScope.Document, action.EquivalenceKey, analyzerDiagnostics.Select(d => d.Id).Distinct(StringComparer.Ordinal), new CustomDiagnosticProvider(analyzerDiagnostics), CancellationToken.None);
-                var fixes = await codeFixProvider.GetFixAllProvider().GetFixAsync(fixAllContext).ConfigureAwait(false);
-
-                document = await ApplyFix(document, fixes, mustCompile: IsValidFixCode).ConfigureAwait(false);
+                document = await ApplyFix(document, actions[(int)codeFixIndex], mustCompile: IsValidFixCode).ConfigureAwait(false);
+                break;
             }
-        }
-        else
-        {
-            for (var i = 0; i < analyzerDiagnostics.Length; ++i)
-            {
-                var diagnostic = analyzerDiagnostics[0];
-                var actions = new List<CodeAction>();
-                var context = new CodeFixContext(document, diagnostic, (a, _) => actions.Add(a), CancellationToken.None);
-                await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
 
-                if (actions.Count == 0)
-                    break;
-
-                if (codeFixIndex is not null)
-                {
-                    document = await ApplyFix(document, actions[(int)codeFixIndex], mustCompile: IsValidFixCode).ConfigureAwait(false);
-                    break;
-                }
-
-                document = await ApplyFix(document, actions[0], mustCompile: IsValidFixCode).ConfigureAwait(false);
-                analyzerDiagnostics = await GetSortedDiagnosticsFromDocuments(analyzers, [document], compileSolution: false).ConfigureAwait(false);
-            }
+            document = await ApplyFix(document, actions[0], mustCompile: IsValidFixCode).ConfigureAwait(false);
+            analyzerDiagnostics = await GetSortedDiagnosticsFromDocuments(analyzers, [document], compileSolution: false).ConfigureAwait(false);
         }
 
         // after applying all of the code fixes, compare the resulting string to the inputted one
         var actual = await GetStringFromDocument(document).ConfigureAwait(false);
-        Assert.Equal(newSource.ReplaceLineEndings(string.Empty), actual.ReplaceLineEndings(string.Empty), ignoreLineEndingDifferences: true, ignoreAllWhiteSpace: true );
+        Assert.Equal(newSource.ReplaceLineEndings(string.Empty), actual.ReplaceLineEndings(string.Empty), ignoreLineEndingDifferences: true, ignoreAllWhiteSpace: true);
     }
 
     private async Task<Document> ApplyFix(Document document, CodeAction codeAction, bool mustCompile)
@@ -544,25 +489,6 @@ public sealed partial class ProjectBuilder
         var root = await simplifiedDoc.GetSyntaxRootAsync().ConfigureAwait(false);
         root = Formatter.Format(root, Formatter.Annotation, simplifiedDoc.Project.Solution.Workspace);
         return root.GetText().ToString();
-    }
-
-    private sealed class CustomDiagnosticProvider(Diagnostic[] diagnostics) : FixAllContext.DiagnosticProvider
-    {
-        public override Task<IEnumerable<Diagnostic>> GetAllDiagnosticsAsync(Project project, CancellationToken cancellationToken)
-        {
-            return GetProjectDiagnosticsAsync(project, cancellationToken);
-        }
-
-        public override async Task<IEnumerable<Diagnostic>> GetDocumentDiagnosticsAsync(Document document, CancellationToken cancellationToken)
-        {
-            var documentRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            return diagnostics.Where(diagnostic => documentRoot == diagnostic.Location.SourceTree.GetRoot(cancellationToken));
-        }
-
-        public override Task<IEnumerable<Diagnostic>> GetProjectDiagnosticsAsync(Project project, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(project.Documents.SelectMany(doc => GetDocumentDiagnosticsAsync(doc, cancellationToken).Result));
-        }
     }
 
     private sealed class InMemoryAdditionalText : AdditionalText

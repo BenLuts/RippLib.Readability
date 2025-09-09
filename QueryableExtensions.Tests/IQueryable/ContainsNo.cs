@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using RippLib.Readability.EFExtensions.Tests.Bootstrapping;
 using RippLib.Readability.EFExtensions.Tests.DB;
-using RippLib.Readability.IQueryable;
+using RippLib.Readability.EFExtensions;
 using System;
 using System.Threading.Tasks;
 

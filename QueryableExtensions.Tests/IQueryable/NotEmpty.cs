@@ -1,12 +1,7 @@
 ﻿using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using RippLib.Readability;
+using RippLib.Readability.EFExtensions;
 using RippLib.Readability.EFExtensions.Tests.Bootstrapping;
 using RippLib.Readability.EFExtensions.Tests.DB;
-using RippLib.Readability.EFExtensions.Tests.DB.Entities;
-using RippLib.Readability.IQueryable;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Queryable;

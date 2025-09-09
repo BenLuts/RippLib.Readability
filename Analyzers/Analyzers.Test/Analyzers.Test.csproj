@@ -17,6 +17,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="System.Formats.Asn1" />
     <PackageReference Include="System.Reflection.Metadata" />
@@ -27,6 +28,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\QueryableExtensions\QueryableExtensions.csproj" />
     <ProjectReference Include="..\..\RippLib.Readability\Extensions.csproj" />
     <ProjectReference Include="..\Analyzers.CodeFixes\Analyzers.CodeFixes.csproj" PrivateAssets="all" />
     <ProjectReference Include="..\Analyzers\Analyzers.csproj" PrivateAssets="all" />
