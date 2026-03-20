@@ -19,6 +19,7 @@
         <IncludeBuildOutput>false</IncludeBuildOutput>
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
         <NoPackageAnalysis>true</NoPackageAnalysis>
+        <MSBuildWarningsAsMessages>MSB3277</MSBuildWarningsAsMessages>
     </PropertyGroup>
 
     

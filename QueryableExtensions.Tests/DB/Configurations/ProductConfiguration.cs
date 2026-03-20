@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿#pragma warning disable CA1812 // Instantiated by EF Core via reflection
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RippLib.Readability.EFExtensions.Tests.DB.Entities;
 
