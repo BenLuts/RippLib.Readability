@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using RippLib.Readability.EFExtensions.Tests.Bootstrapping;
 using RippLib.Readability.EFExtensions.Tests.DB;
 using RippLib.Readability.EFExtensions;
@@ -22,7 +22,7 @@ public class ContainsNo : IClassFixture<TestFixture>
         await PrepDB();
         using var context = GetContext();
 
-        var result = await context.Products.ContainsNoAsync(x => x.Id != Guid.Empty);
+        var result = await context.Products.ContainsNoneAsync(x => x.Id != Guid.Empty);
 
         result.Should().BeFalse();
     }
@@ -33,7 +33,7 @@ public class ContainsNo : IClassFixture<TestFixture>
         await PrepDB();
         using var context = GetContext();
 
-        var result = await context.Products.ContainsNoAsync(x => x.Id == Guid.Empty);
+        var result = await context.Products.ContainsNoneAsync(x => x.Id == Guid.Empty);
 
         result.Should().BeTrue();
     }

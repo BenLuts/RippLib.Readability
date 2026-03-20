@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading;
@@ -126,7 +126,7 @@ public static class QueryableExtensions
     ///     <paramref name="source" /> or <paramref name="predicate" /> is <see langword="null" />.
     /// </exception>
     /// <exception cref="OperationCanceledException">If the <see cref="CancellationToken" /> is canceled.</exception>
-    public static Task<bool> ContainsNoAsync<T>(this IQueryable<T> queryable, Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+    public static Task<bool> ContainsNoneAsync<T>(this IQueryable<T> queryable, Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
     {
         return queryable.AnyAsync(Negate(predicate), cancellationToken);
     }
