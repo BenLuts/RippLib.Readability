@@ -16,6 +16,7 @@ public class NotEmptyAsyncOverAnyAsyncTest
         {
             8 => TargetFramework.Net8_0,
             9 => TargetFramework.Net9_0,
+            10 => TargetFramework.Net10_0,
             _ => TargetFramework.NetLatest
         };
     }

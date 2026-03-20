@@ -93,7 +93,16 @@ public sealed partial class ProjectBuilder
         return this;
     }
 
-    public ProjectBuilder AddEntityFramework() => AddNuGetReference("Microsoft.EntityFrameworkCore", "9.0.8", "lib/");
+    public ProjectBuilder AddEntityFramework()
+    {
+        var (version, path) = Environment.Version.Major >= 10
+            ? ("10.0.5", "lib/net10.0/")
+            : Environment.Version.Major >= 9
+                ? ("9.0.14", "lib/net9.0/")
+                : ("9.0.14", "lib/net8.0/");
+
+        return AddNuGetReference("Microsoft.EntityFrameworkCore", version, path);
+    }
 
     public ProjectBuilder AddRippLibReadabilityReference()
     {
@@ -106,6 +115,7 @@ public sealed partial class ProjectBuilder
             Path.Combine(baseDir, dllName),
             Path.Combine(baseDir, "..","..", "..", "..", "..", "RippLib.Readability", "bin", "Debug", "net8.0", dllName),
             Path.Combine(baseDir, "..","..", "..", "..", "..", "RippLib.Readability", "bin", "Debug", "net9.0", dllName),
+            Path.Combine(baseDir, "..","..", "..", "..", "..", "RippLib.Readability", "bin", "Debug", "net10.0", dllName),
             Path.Combine(baseDir, "..","..", "..", "..", "..", "RippLib.Readability", "bin", "Debug", "netstandard2.0", dllName),
             Path.Combine(baseDir, "..","..", "..", "..", "..", "RippLib.Readability", "bin", "Debug", "netstandard2.1", dllName),
         };
@@ -131,6 +141,7 @@ public sealed partial class ProjectBuilder
             Path.Combine(baseDir, dllName),
             Path.Combine(baseDir, "..","..", "..", "..", "..", "QueryableExtensions", "bin", "Debug", "net8.0", dllName),
             Path.Combine(baseDir, "..","..", "..", "..", "..", "QueryableExtensions", "bin", "Debug", "net9.0", dllName),
+            Path.Combine(baseDir, "..","..", "..", "..", "..", "QueryableExtensions", "bin", "Debug", "net10.0", dllName),
         };
         foreach (var path in possiblePaths)
         {

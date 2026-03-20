@@ -174,17 +174,21 @@ public sealed partial class ProjectBuilder
                 break;
 
             case TargetFramework.Net8_0:
-                AddNuGetReference("Microsoft.NETCore.App.Ref", "8.0.0", "ref/net8.0/");
+                AddNuGetReference("Microsoft.NETCore.App.Ref", "8.0.25", "ref/net8.0/");
                 break;
 
             case TargetFramework.Net9_0:
-                AddNuGetReference("Microsoft.NETCore.App.Ref", "9.0.0-preview.4.24266.19", "ref/net9.0/");
+                AddNuGetReference("Microsoft.NETCore.App.Ref", "9.0.14", "ref/net9.0/");
+                break;
+
+            case TargetFramework.Net10_0:
+                AddNuGetReference("Microsoft.NETCore.App.Ref", "10.0.5", "ref/net10.0/");
                 break;
         }
 
         AddNuGetReference("System.Collections.Immutable", "1.5.0", "lib/netstandard2.0/");
 
-        if (TargetFramework is not TargetFramework.Net8_0 and not TargetFramework.Net9_0)
+        if (TargetFramework is not TargetFramework.Net8_0 and not TargetFramework.Net9_0 and not TargetFramework.Net10_0)
         {
             AddNuGetReference("System.Numerics.Vectors", "4.5.0", "ref/netstandard2.0/");
         }

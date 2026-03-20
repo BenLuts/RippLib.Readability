@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     
     <PropertyGroup>
-        <TargetFrameworks>net8.0;net9.0;netstandard2.0;netstandard2.1</TargetFrameworks>
+        <TargetFrameworks>net8.0;net9.0;net10.0;netstandard2.0;netstandard2.1</TargetFrameworks>
         <LangVersion>Latest</LangVersion>
         <RootNamespace>RippLib.Readability</RootNamespace>
         <AssemblyVersion>0.0.0.10</AssemblyVersion>
@@ -34,6 +34,7 @@
     <ItemGroup>
         <None Include="..\RippLib.Readability\bin\Release\net8.0\Extensions.dll" Pack="true" PackagePath="lib/net8.0" />
         <None Include="..\RippLib.Readability\bin\Release\net9.0\Extensions.dll" Pack="true" PackagePath="lib/net9.0" />
+        <None Include="..\RippLib.Readability\bin\Release\net10.0\Extensions.dll" Pack="true" PackagePath="lib/net10.0" />
         <None Include="..\RippLib.Readability\bin\Release\netstandard2.0\Extensions.dll" Pack="true" PackagePath="lib/netstandard2.0" />
         <None Include="..\RippLib.Readability\bin\Release\netstandard2.1\Extensions.dll" Pack="true" PackagePath="lib/netstandard2.1" />
         <None Include="tools\*.ps1" CopyToOutputDirectory="Always" Pack="true" PackagePath="tools" />
