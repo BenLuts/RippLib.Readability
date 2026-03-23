@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+        <LangVersion>Latest</LangVersion>
+        <RootNamespace>RippLib.Readability.EFExtensions</RootNamespace>
+        <AssemblyVersion>0.0.0.1</AssemblyVersion>
+        <FileVersion>0.0.0.1</FileVersion>
+        <Version>0.0.0.1</Version>
+        <Authors>Ben Luts</Authors>
+        <PackageId>RippLib.Readability.EFExtensions</PackageId>
+        <Description>Async Entity Framework extension methods for RippLib.Readability — wrapping AnyAsync() with readable alternatives like NotEmptyAsync(), EmptyAsync(), ContainsAnyAsync() and ContainsNoneAsync(). Includes Roslyn analyzers and code fixes.</Description>
+        <Copyright>Ben Luts</Copyright>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageProjectUrl>https://github.com/BenLuts/RippLib.Readability</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/BenLuts/RippLib.Readability</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <NoPackageAnalysis>true</NoPackageAnalysis>
+        <MSBuildWarningsAsMessages>MSB3277</MSBuildWarningsAsMessages>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- Mark analyzer projects as private to prevent them from becoming package dependencies -->
+        <ProjectReference Include="..\Analyzers\Analyzers.CodeFixes\Analyzers.CodeFixes.csproj" PrivateAssets="all" OutputItemType="Analyzer" />
+        <ProjectReference Include="..\Analyzers\Analyzers\Analyzers.csproj" PrivateAssets="all" OutputItemType="Analyzer" />
+        <!-- EF extension methods project -->
+        <ProjectReference Include="..\QueryableExtensions\QueryableExtensions.csproj" PrivateAssets="all" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\QueryableExtensions\bin\Release\net8.0\QueryableExtensions.dll" Pack="true" PackagePath="lib/net8.0" />
+        <None Include="..\QueryableExtensions\bin\Release\net9.0\QueryableExtensions.dll" Pack="true" PackagePath="lib/net9.0" />
+        <None Include="..\QueryableExtensions\bin\Release\net10.0\QueryableExtensions.dll" Pack="true" PackagePath="lib/net10.0" />
+        <None Include="tools\*.ps1" CopyToOutputDirectory="Always" Pack="true" PackagePath="tools" />
+
+        <None Include="..\Analyzers\Analyzers\bin\Release\netstandard2.0\Analyzers.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="..\Analyzers\Analyzers.CodeFixes\bin\Release\netstandard2.0\Analyzers.CodeFixes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="..\LICENSE" Pack="true" PackagePath="" />
+    </ItemGroup>
+
+</Project>

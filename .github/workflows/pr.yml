@@ -1,6 +1,3 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
 name: Validate PR
 
 on:
@@ -8,16 +5,34 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
-
+  # RippLib.Readability.Tests targets net472/net480/net481 which require a Windows runner.
+  # All other test projects (except QueryableExtensions.Tests) are also run here.
+  build-and-test-windows:
     runs-on: windows-latest
-
     steps:
     - uses: actions/checkout@v4
 
     - name: Restore dependencies
       run: dotnet restore
+
     - name: Build
       run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+
+    - name: Test (all except QueryableExtensions.Tests)
+      run: dotnet test --no-build --verbosity normal --filter "FullyQualifiedName!~Queryable" -m:1
+
+  # QueryableExtensions.Tests uses Testcontainers with a Linux SQL Server image,
+  # which requires a Linux Docker host — it cannot run on windows-latest.
+  build-and-test-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore
+
+    - name: Test (QueryableExtensions.Tests only)
+      run: dotnet test QueryableExtensions.Tests/QueryableExtensions.Tests.csproj --verbosity normal

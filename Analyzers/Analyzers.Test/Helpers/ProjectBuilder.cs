@@ -1,4 +1,9 @@
-﻿using System;
+﻿using Analyzers.Test.Helpers;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -6,14 +11,9 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Xunit;
 
 namespace TestHelper;
@@ -21,18 +21,16 @@ namespace TestHelper;
 public sealed partial class ProjectBuilder
 {
     private static readonly ConcurrentDictionary<string, Lazy<Task<string[]>>> _nuGetPackagesCache = new(StringComparer.Ordinal);
-
-    private int _diagnosticMessageIndex;
-
+    
     public OutputKind OutputKind { get; private set; } = OutputKind.DynamicallyLinkedLibrary;
     public string FileName { get; private set; }
     public string SourceCode { get; private set; } = "";
-    public Dictionary<string, string> AnalyzerConfiguration { get; private set; }
-    public Dictionary<string, string> AdditionalFiles { get; private set; }
+    public Dictionary<string, string> AnalyzerConfiguration { get; } = new();
+    public Dictionary<string, string> AdditionalFiles { get; } = new();
     public bool IsValidCode { get; private set; } = true;
     public bool IsValidFixCode { get; private set; } = true;
     public LanguageVersion LanguageVersion { get; private set; } = LanguageVersion.Latest;
-    public TargetFramework TargetFramework { get; private set; } = TargetFramework.NetStandard2_0;
+    public TargetFramework TargetFramework { get; private set; } = TargetFramework.NetLatest;
     public IList<MetadataReference> References { get; } = [];
     public IList<string> ApiReferences { get; } = [];
     public IList<DiagnosticAnalyzer> DiagnosticAnalyzer { get; } = [];
@@ -40,7 +38,6 @@ public sealed partial class ProjectBuilder
     public IList<DiagnosticResult> ExpectedDiagnosticResults { get; } = [];
     public string ExpectedFixedCode { get; private set; }
     public int? CodeFixIndex { get; private set; }
-    public bool UseBatchFixer { get; private set; }
     public string DefaultAnalyzerId { get; set; }
     public string DefaultAnalyzerMessage { get; set; }
 
@@ -54,7 +51,7 @@ public sealed partial class ProjectBuilder
 
         async Task<string[]> Download()
         {
-            var tempFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Meziantou.AnalyzerTests", "ref", packageName + '@' + version);
+            var tempFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AnalyzerTests", "ref", packageName + '@' + version);
             if (!Directory.Exists(tempFolder) || !Directory.EnumerateFileSystemEntries(tempFolder).Any())
             {
                 Directory.CreateDirectory(tempFolder);
@@ -76,15 +73,9 @@ public sealed partial class ProjectBuilder
                 if (Path.GetFileName(dll) == "System.EnterpriseServices.Wrapper.dll")
                     continue;
 
-                try
-                {
-                    using var stream = File.OpenRead(dll);
-                    using var peFile = new PEReader(stream);
-                    result.Add(dll);
-                }
-                catch
-                {
-                }
+                using var stream = File.OpenRead(dll);
+                using var peFile = new PEReader(stream);
+                result.Add(dll);
             }
 
             Assert.NotEmpty(result);
@@ -102,61 +93,16 @@ public sealed partial class ProjectBuilder
         return this;
     }
 
-    public ProjectBuilder WithAnalyzerFromNuGet(string packageName, string version, string[] paths, string[] ruleIds)
+    public ProjectBuilder AddEntityFramework()
     {
-        var ruleFound = false;
-        var references = GetNuGetReferences(packageName, version, paths).Result;
-        foreach (var reference in references)
-        {
-            var assembly = Assembly.Load(reference);
-            foreach (var type in assembly.GetTypes())
-            {
-                if (type.IsAbstract || !typeof(DiagnosticAnalyzer).IsAssignableFrom(type))
-                    continue;
+        var (version, path) = Environment.Version.Major >= 10
+            ? ("10.0.5", "lib/net10.0/")
+            : Environment.Version.Major >= 9
+                ? ("9.0.14", "lib/net9.0/")
+                : ("9.0.14", "lib/net8.0/");
 
-                var instance = (DiagnosticAnalyzer)Activator.CreateInstance(type);
-                if (instance.SupportedDiagnostics.Any(d => ruleIds.Contains(d.Id, StringComparer.Ordinal)))
-                {
-                    DiagnosticAnalyzer.Add(instance);
-                    ruleFound = true;
-                }
-            }
-        }
-
-        if (!ruleFound)
-            throw new InvalidOperationException("Rule id not found");
-
-        return this;
+        return AddNuGetReference("Microsoft.EntityFrameworkCore", version, path);
     }
-
-    public ProjectBuilder WithMicrosoftCodeAnalysisNetAnalyzers(params string[] ruleIds) =>
-        WithAnalyzerFromNuGet(
-            "Microsoft.CodeAnalysis.NetAnalyzers",
-            "7.0.1",
-            paths: ["analyzers/dotnet/cs/Microsoft.CodeAnalysis"],
-            ruleIds);
-
-    public ProjectBuilder WithMicrosoftCodeAnalysisCSharpCodeStyleAnalyzers(params string[] ruleIds) =>
-        WithAnalyzerFromNuGet(
-            "Microsoft.CodeAnalysis.CSharp.CodeStyle",
-            "4.10.0-2.final",
-            paths: ["analyzers/dotnet/cs/"],
-            ruleIds);
-
-    public ProjectBuilder AddMSTestApi() => AddNuGetReference("MSTest.TestFramework", "2.1.1", "lib/netstandard1.0/");
-
-    public ProjectBuilder AddNUnitApi() => AddNuGetReference("NUnit", "3.12.0", "lib/netstandard2.0/");
-
-    public ProjectBuilder AddXUnitApi() =>
-        AddNuGetReference("xunit.extensibility.core", "2.4.1", "lib/netstandard1.1/")
-        .AddNuGetReference("xunit.assert", "2.4.1", "lib/netstandard1.1/");
-
-    public ProjectBuilder AddAsyncInterfaceApi() =>
-        AddNuGetReference("Microsoft.Bcl.AsyncInterfaces", "1.1.1", "ref/netstandard2.0/")
-        .AddNuGetReference("System.Threading.Tasks.Extensions", "4.5.4", "lib/netstandard2.0/")
-        .AddNuGetReference("System.Runtime.CompilerServices.Unsafe", "4.7.1", "ref/netstandard2.0/");
-
-    public ProjectBuilder AddSystemTextJson() => AddNuGetReference("System.Text.Json", "4.7.2", "lib/netstandard2.0/");
 
     public ProjectBuilder AddRippLibReadabilityReference()
     {
@@ -169,6 +115,7 @@ public sealed partial class ProjectBuilder
             Path.Combine(baseDir, dllName),
             Path.Combine(baseDir, "..","..", "..", "..", "..", "RippLib.Readability", "bin", "Debug", "net8.0", dllName),
             Path.Combine(baseDir, "..","..", "..", "..", "..", "RippLib.Readability", "bin", "Debug", "net9.0", dllName),
+            Path.Combine(baseDir, "..","..", "..", "..", "..", "RippLib.Readability", "bin", "Debug", "net10.0", dllName),
             Path.Combine(baseDir, "..","..", "..", "..", "..", "RippLib.Readability", "bin", "Debug", "netstandard2.0", dllName),
             Path.Combine(baseDir, "..","..", "..", "..", "..", "RippLib.Readability", "bin", "Debug", "netstandard2.1", dllName),
         };
@@ -183,9 +130,27 @@ public sealed partial class ProjectBuilder
         return this;
     }
 
-    public ProjectBuilder WithOutputKind(OutputKind outputKind)
+    public ProjectBuilder AddRippLibReadabilityEFReference()
     {
-        OutputKind = outputKind;
+        // Find the output path for the Extensions project (RippLib.Readability)
+        // and add it as a MetadataReference if not already present.
+        var baseDir = AppContext.BaseDirectory;
+        var dllName = "QueryableExtensions.dll";
+        var possiblePaths = new[]
+        {
+            Path.Combine(baseDir, dllName),
+            Path.Combine(baseDir, "..","..", "..", "..", "..", "QueryableExtensions", "bin", "Debug", "net8.0", dllName),
+            Path.Combine(baseDir, "..","..", "..", "..", "..", "QueryableExtensions", "bin", "Debug", "net9.0", dllName),
+            Path.Combine(baseDir, "..","..", "..", "..", "..", "QueryableExtensions", "bin", "Debug", "net10.0", dllName),
+        };
+        foreach (var path in possiblePaths)
+        {
+            if (File.Exists(path) && !References.Any(r => r.Display?.EndsWith(dllName) == true))
+            {
+                References.Add(MetadataReference.CreateFromFile(Path.GetFullPath(path)));
+                break;
+            }
+        }
         return this;
     }
 
@@ -279,57 +244,6 @@ public sealed partial class ProjectBuilder
         SourceCode = sb.ToString();
     }
 
-    public ProjectBuilder WithAnalyzerConfiguration(Dictionary<string, string> configuration)
-    {
-        AnalyzerConfiguration = configuration;
-        return this;
-    }
-
-    public ProjectBuilder AddAnalyzerConfiguration(string key, string value)
-    {
-        AnalyzerConfiguration ??= [];
-        AnalyzerConfiguration[key] = value;
-        return this;
-    }
-
-    public ProjectBuilder AddAdditionalFile(string path, string content)
-    {
-        AdditionalFiles ??= [];
-        AdditionalFiles[path] = content;
-        return this;
-    }
-
-    public ProjectBuilder WithLanguageVersion(LanguageVersion languageVersion)
-    {
-        LanguageVersion = languageVersion;
-        return this;
-    }
-
-    public ProjectBuilder WithCompilation()
-    {
-        IsValidCode = true;
-        return this;
-    }
-
-    public ProjectBuilder WithNoCompilation()
-    {
-        IsValidCode = false;
-        IsValidFixCode = false;
-        return this;
-    }
-
-    public ProjectBuilder WithNoFixCompilation()
-    {
-        IsValidFixCode = false;
-        return this;
-    }
-
-    public ProjectBuilder WithDefaultAnalyzerId(string id)
-    {
-        DefaultAnalyzerId = id;
-        return this;
-    }
-
     public ProjectBuilder WithAnalyzer(DiagnosticAnalyzer diagnosticAnalyzer, string id = null, string message = null)
     {
         DiagnosticAnalyzer.Add(diagnosticAnalyzer);
@@ -360,13 +274,6 @@ public sealed partial class ProjectBuilder
         return this;
     }
 
-    public ProjectBuilder ShouldReportDiagnosticWithMessage(string message)
-    {
-        ExpectedDiagnosticResults[_diagnosticMessageIndex].Message = message;
-        _diagnosticMessageIndex++;
-        return this;
-    }
-
     public ProjectBuilder ShouldFixCodeWith(string codeFix) =>
         ShouldFixCodeWith(index: null, codeFix);
 
@@ -374,17 +281,6 @@ public sealed partial class ProjectBuilder
     {
         ExpectedFixedCode = codeFix;
         CodeFixIndex = index;
-        return this;
-    }
-
-    public ProjectBuilder ShouldBatchFixCodeWith([StringSyntax("C#-test")] string codeFix) =>
-        ShouldBatchFixCodeWith(index: null, codeFix);
-
-    public ProjectBuilder ShouldBatchFixCodeWith(int? index, [StringSyntax("C#-test")] string codeFix)
-    {
-        ExpectedFixedCode = codeFix;
-        CodeFixIndex = index;
-        UseBatchFixer = true;
         return this;
     }
 
