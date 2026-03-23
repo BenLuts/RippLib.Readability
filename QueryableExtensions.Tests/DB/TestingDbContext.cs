@@ -25,7 +25,7 @@ public class DbReadInterceptor : DbCommandInterceptor
 {
     public override ValueTask<InterceptionResult<DbDataReader>> ReaderExecutingAsync(DbCommand command, CommandEventData eventData, InterceptionResult<DbDataReader> result, CancellationToken cancellationToken = default)
     {
-        var t = command.CommandText;
+        _ = command.CommandText;
         return base.ReaderExecutingAsync(command, eventData, result, cancellationToken);
     }
     public override InterceptionResult<DbDataReader> ReaderExecuting(
@@ -34,7 +34,7 @@ public class DbReadInterceptor : DbCommandInterceptor
         InterceptionResult<DbDataReader> result)
     {
         //e.g., alter command.CommandText
-        var t = command.CommandText;
-        return result;
+        _ = command.CommandText;
+        return base.ReaderExecuting(command, eventData, result);
     }
 }

@@ -25,8 +25,8 @@ public sealed partial class ProjectBuilder
     public OutputKind OutputKind { get; private set; } = OutputKind.DynamicallyLinkedLibrary;
     public string FileName { get; private set; }
     public string SourceCode { get; private set; } = "";
-    public Dictionary<string, string> AnalyzerConfiguration { get; }
-    public Dictionary<string, string> AdditionalFiles { get; }
+    public Dictionary<string, string> AnalyzerConfiguration { get; } = new();
+    public Dictionary<string, string> AdditionalFiles { get; } = new();
     public bool IsValidCode { get; private set; } = true;
     public bool IsValidFixCode { get; private set; } = true;
     public LanguageVersion LanguageVersion { get; private set; } = LanguageVersion.Latest;

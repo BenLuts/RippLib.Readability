@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.CSharp;
@@ -45,14 +46,26 @@ public class ContainsAnyAsyncOverAnyAsync : DiagnosticAnalyzer
         if (symbolInfo.Symbol is not IMethodSymbol methodSymbol)
             return;
 
-        if (methodSymbol.Name != "AnyAsync" ||
-            methodSymbol.ContainingNamespace.ToDisplayString() != "Microsoft.EntityFrameworkCore" ||
-            methodSymbol.ContainingType?.Name != "EntityFrameworkQueryableExtensions")
+        // Normalize to the underlying method definition so we handle both
+        // reduced extension calls (query.AnyAsync(predicate, ct)) and static-form calls
+        // (EntityFrameworkQueryableExtensions.AnyAsync(query, predicate, ct)).
+        var baseMethod = methodSymbol.ReducedFrom ?? methodSymbol;
+
+        if (baseMethod.Name != "AnyAsync" ||
+            baseMethod.ContainingNamespace.ToDisplayString() != "Microsoft.EntityFrameworkCore" ||
+            baseMethod.ContainingType?.Name != "EntityFrameworkQueryableExtensions")
             return;
 
-        // Only match the predicate overload: AnyAsync(predicate, CancellationToken)
-        if (methodSymbol.Parameters.Length != 2 ||
-            methodSymbol.Parameters[1].Type.Name != "CancellationToken")
+        // Only match the predicate overload: AnyAsync(source, predicate, CancellationToken)
+        var parameters = baseMethod.Parameters;
+
+        var hasPredicateParameter = parameters.Any(p =>
+            p.Type.ToDisplayString().Contains("System.Linq.Expressions.Expression"));
+
+        if (!hasPredicateParameter)
+            return;
+
+        if (parameters[parameters.Length - 1].Type.Name != "CancellationToken")
             return;
 
         if (IsNegatedAnyAsync(invocationExpr))

@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.CSharp;
@@ -59,12 +60,26 @@ public class NotEmptyAsyncOverAnyAsync : DiagnosticAnalyzer
                 return;
 
             // Only trigger for parameterless AnyAsync() (no predicate)
-            if (methodSymbol.Parameters.Length == 1  &&
-                 methodSymbol.Parameters[0].Type.Name == "CancellationToken")
-            {
-                var diagnostic = Diagnostic.Create(_rule, invocationExpr.GetLocation());
-                context.ReportDiagnostic(diagnostic);
-            }
+            // Normalize to the underlying method definition so we handle both
+            // reduced extension calls (query.AnyAsync(ct)) and static-form calls
+            // (EntityFrameworkQueryableExtensions.AnyAsync(query, ct)).
+            var baseMethod = methodSymbol.ReducedFrom ?? methodSymbol;
+
+            // Only trigger for AnyAsync overloads that do not take a predicate.
+            var parameters = baseMethod.Parameters;
+
+            var hasPredicateParameter = parameters.Any(p =>
+                p.Type.ToDisplayString().Contains("System.Linq.Expressions.Expression"));
+
+            if (hasPredicateParameter)
+                return;
+
+            var cancellationTokenParameterCount = parameters.Count(p => p.Type.Name == "CancellationToken");
+            if (cancellationTokenParameterCount > 1)
+                return;
+
+            var diagnostic = Diagnostic.Create(_rule, invocationExpr.GetLocation());
+            context.ReportDiagnostic(diagnostic);
         }
     }
 

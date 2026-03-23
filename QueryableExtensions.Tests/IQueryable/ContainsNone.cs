@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Queryable;
 
-public class ContainsNo : IClassFixture<TestFixture>
+public class ContainsNone : IClassFixture<TestFixture>
 {
     private readonly TestFixture _fixture;
 
-    public ContainsNo(TestFixture fixture)
+    public ContainsNone(TestFixture fixture)
     {
         _fixture = fixture;
     }

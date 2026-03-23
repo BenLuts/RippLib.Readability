@@ -45,14 +45,21 @@ public class EmptyAsyncOverNotAnyAsync : DiagnosticAnalyzer
         if (symbolInfo.Symbol is not IMethodSymbol methodSymbol)
             return;
 
-        if (methodSymbol.Name != "AnyAsync" ||
-            methodSymbol.ContainingNamespace.ToDisplayString() != "Microsoft.EntityFrameworkCore" ||
-            methodSymbol.ContainingType?.Name != "EntityFrameworkQueryableExtensions")
+        // Normalize to the original extension method so invocation style (reduced vs static)
+        // does not affect parameter inspection.
+        var originalMethod = methodSymbol.ReducedFrom ?? methodSymbol;
+
+        if (originalMethod.Name != "AnyAsync" ||
+            originalMethod.ContainingNamespace.ToDisplayString() != "Microsoft.EntityFrameworkCore" ||
+            originalMethod.ContainingType?.Name != "EntityFrameworkQueryableExtensions")
             return;
 
-        // Only match parameterless overload (no predicate)
-        if (!(methodSymbol.Parameters.Length == 1 &&
-              methodSymbol.Parameters[0].Type.Name == "CancellationToken"))
+        var parameters = originalMethod.Parameters;
+
+        // Only match the overload without a predicate:
+        // EntityFrameworkQueryableExtensions.AnyAsync(source, CancellationToken)
+        if (!(parameters.Length == 2 &&
+              parameters[1].Type.Name == "CancellationToken"))
             return;
 
         if (!IsNegatedAnyAsync(invocationExpr))

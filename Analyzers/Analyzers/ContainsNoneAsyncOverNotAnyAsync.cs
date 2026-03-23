@@ -51,8 +51,8 @@ public class ContainsNoneAsyncOverNotAnyAsync : DiagnosticAnalyzer
             return;
 
         // Only match the predicate overload: AnyAsync(predicate, CancellationToken)
-        if (methodSymbol.Parameters.Length != 2 ||
-            methodSymbol.Parameters[1].Type.Name != "CancellationToken")
+        if (methodSymbol.Parameters.Length < 2 ||
+            methodSymbol.Parameters[methodSymbol.Parameters.Length - 1].Type.Name != "CancellationToken")
             return;
 
         if (!IsNegatedAnyAsync(invocationExpr))

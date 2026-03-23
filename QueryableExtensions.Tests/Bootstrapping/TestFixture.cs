@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RippLib.Readability.EFExtensions.Tests.DB;
 using RippLib.Readability.EFExtensions.Tests.DB.Entities;
-using RippLib.Readability.QueryableExtensions.Tests.Bootstrapping;
 using System.Threading.Tasks;
 using Testcontainers.MsSql;
 

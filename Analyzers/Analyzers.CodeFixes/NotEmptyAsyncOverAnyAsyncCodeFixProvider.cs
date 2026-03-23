@@ -45,7 +45,7 @@ public class NotEmptyAsyncOverAnyAsyncCodeFixProvider : CodeFixProvider
     {
         var editor = await DocumentEditor.CreateAsync(document, cancellationToken);
 
-        // Extract the expression before .AnyAsync() — e.g., "query"
+        // Extract the expression before .AnyAsync() - e.g., "query"
         if (anyAsyncInvocation.Expression is MemberAccessExpressionSyntax memberAccess)
         {
             var notEmptyAsyncAccess = SyntaxFactory.MemberAccessExpression(

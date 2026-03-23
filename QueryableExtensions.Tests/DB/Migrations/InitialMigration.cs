@@ -17,7 +17,11 @@ internal class InitialMigration : Migration
             {
                 Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                 Name = table.Column<string>(type: "nvarchar(50)", nullable: false),
-                Description = table.Column<string>(type: "nvarchar(20)", nullable: false),
+                Description = table.Column<string>(type: "nvarchar(200)", nullable: false),
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("PK_Product", x => x.Id);
             });
     }
 }
