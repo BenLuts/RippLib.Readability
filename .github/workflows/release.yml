@@ -23,7 +23,7 @@ jobs:
     - name: Build
       run: dotnet build -c Release
     - name: Test
-      run: dotnet test -c Release --no-build --filter "FullyQualifiedName!~Queryable"
+      run: dotnet test -c Release --no-build --filter "FullyQualifiedName!~Queryable" -m:1
 
   # Linux runner required: QueryableExtensions.Tests uses Testcontainers to spin up a
   # SQL Server Docker image, which requires a Linux Docker host.
