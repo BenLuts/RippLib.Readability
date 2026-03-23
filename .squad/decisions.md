@@ -46,6 +46,38 @@ Both run in parallel; both must pass. Windows job uses `--filter "FullyQualified
 
 ---
 
+---
+
+## Archived Decisions (Inbox → Merged)
+
+### 3. Fixed All 15 Copilot PR Review Comments
+
+**Date:** 2026-03-23  
+**Author:** Masterchief (C# Specialist)  
+**Status:** Implemented  
+
+Addressed all 15 Copilot PR review comments on the `feature/ef-compatibility` branch:
+- **Critical bugs:** ContainsNoneAsync logic error, TestingDbContext.ReaderExecuting bypass, InitialMigration schema mismatch
+- **XML docs:** NotEmptyAsync, EmptyAsync, ContainsNoneAsync corrections
+- **Analyzer robustness:** Added ReducedFrom normalization to 4 analyzers, netstandard2.0-safe parameter access
+- **Code quality:** ProjectBuilder initializers, encoding artifact fix, namespace consistency, unused variable discards, ContainsNo→ContainsNone rename
+
+Build succeeded with 0 errors, 0 warnings.
+
+---
+
+### 4. Removed Dead RoslynVersion Configuration
+
+**Date:** 2026-03-24  
+**Author:** Forge (GitHub Actions Specialist)  
+**Status:** Implemented  
+
+Removed 84 lines of ineffective RoslynVersion conditional logic from `Directory.Build.Targets` that claimed to control Roslyn versions but never specified `Version` or `VersionOverride`. Simplified to single PropertyGroup with active constants matching actual default configuration. No functional change—package versions still sourced from `Directory.Packages.props`.
+
+**Rationale:** Code should do what it claims. Dead configuration knobs are worse than dead code.
+
+---
+
 ## Governance
 
 - All meaningful changes require team consensus
