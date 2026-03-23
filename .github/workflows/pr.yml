@@ -19,7 +19,7 @@ jobs:
       run: dotnet build --no-restore
 
     - name: Test (all except QueryableExtensions.Tests)
-      run: dotnet test --no-build --verbosity normal --filter "FullyQualifiedName!~QueryableExtensions"
+      run: dotnet test --no-build --verbosity normal --filter "FullyQualifiedName!~Queryable"
 
   # QueryableExtensions.Tests uses Testcontainers with a Linux SQL Server image,
   # which requires a Linux Docker host — it cannot run on windows-latest.
