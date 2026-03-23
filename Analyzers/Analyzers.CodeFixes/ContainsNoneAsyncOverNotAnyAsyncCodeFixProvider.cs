@@ -45,22 +45,37 @@ public class ContainsNoneAsyncOverNotAnyAsyncCodeFixProvider : CodeFixProvider
     {
         var editor = await DocumentEditor.CreateAsync(document, cancellationToken);
 
-        if (anyAsyncInvocation.Expression is not MemberAccessExpressionSyntax memberAccess)
-            return document;
-
         var negatingExpr = FindNegatingExpression(anyAsyncInvocation);
         if (negatingExpr is null)
             return document;
 
+        // Detect invocation style and extract queryable expression
+        ExpressionSyntax queryableExpression;
+        ArgumentListSyntax newArgumentList;
+        if (anyAsyncInvocation.Expression is MemberAccessExpressionSyntax memberAccess)
+        {
+            // Reduced extension form: query.AnyAsync(...)
+            queryableExpression = memberAccess.Expression;
+            newArgumentList = anyAsyncInvocation.ArgumentList;
+        }
+        else
+        {
+            // Static form: EntityFrameworkQueryableExtensions.AnyAsync(query, ...)
+            var args = anyAsyncInvocation.ArgumentList.Arguments;
+            queryableExpression = args[0].Expression;
+            newArgumentList = anyAsyncInvocation.ArgumentList.WithArguments(
+                SyntaxFactory.SeparatedList(args.Skip(1)));
+        }
+
         // Build: query.ContainsNoneAsync(predicate, ct)
         var containsNoneAsyncAccess = SyntaxFactory.MemberAccessExpression(
             SyntaxKind.SimpleMemberAccessExpression,
-            memberAccess.Expression,
+            queryableExpression,
             SyntaxFactory.IdentifierName("ContainsNoneAsync"));
 
         var containsNoneAsyncInvocation = SyntaxFactory.InvocationExpression(
             containsNoneAsyncAccess,
-            anyAsyncInvocation.ArgumentList);
+            newArgumentList);
 
         // Build: await query.ContainsNoneAsync(predicate, ct) — replacing the whole !await ... expression
         var awaitContainsNoneAsync = SyntaxFactory.AwaitExpression(containsNoneAsyncInvocation)

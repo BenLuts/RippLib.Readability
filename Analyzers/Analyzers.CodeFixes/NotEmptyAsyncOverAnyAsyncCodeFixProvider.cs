@@ -45,21 +45,35 @@ public class NotEmptyAsyncOverAnyAsyncCodeFixProvider : CodeFixProvider
     {
         var editor = await DocumentEditor.CreateAsync(document, cancellationToken);
 
-        // Extract the expression before .AnyAsync() - e.g., "query"
+        // Detect invocation style and extract queryable expression
+        ExpressionSyntax queryableExpression;
+        ArgumentListSyntax newArgumentList;
         if (anyAsyncInvocation.Expression is MemberAccessExpressionSyntax memberAccess)
         {
-            var notEmptyAsyncAccess = SyntaxFactory.MemberAccessExpression(
-                SyntaxKind.SimpleMemberAccessExpression,
-                memberAccess.Expression,
-                SyntaxFactory.IdentifierName("NotEmptyAsync"));
-
-            // Preserve the arguments (cancellation token if present)
-            var notEmptyAsyncInvocation = SyntaxFactory.InvocationExpression(
-                notEmptyAsyncAccess,
-                anyAsyncInvocation.ArgumentList);
-
-            editor.ReplaceNode(anyAsyncInvocation, notEmptyAsyncInvocation);
+            // Reduced extension form: query.AnyAsync(...)
+            queryableExpression = memberAccess.Expression;
+            newArgumentList = anyAsyncInvocation.ArgumentList;
         }
+        else
+        {
+            // Static form: EntityFrameworkQueryableExtensions.AnyAsync(query, ...)
+            var args = anyAsyncInvocation.ArgumentList.Arguments;
+            queryableExpression = args[0].Expression;
+            newArgumentList = anyAsyncInvocation.ArgumentList.WithArguments(
+                SyntaxFactory.SeparatedList(args.Skip(1)));
+        }
+
+        var notEmptyAsyncAccess = SyntaxFactory.MemberAccessExpression(
+            SyntaxKind.SimpleMemberAccessExpression,
+            queryableExpression,
+            SyntaxFactory.IdentifierName("NotEmptyAsync"));
+
+        // Preserve the arguments (cancellation token if present)
+        var notEmptyAsyncInvocation = SyntaxFactory.InvocationExpression(
+            notEmptyAsyncAccess,
+            newArgumentList);
+
+        editor.ReplaceNode(anyAsyncInvocation, notEmptyAsyncInvocation);
 
         // Get the changed root after the .NotEmptyAsync() replacement
         var changedRoot = editor.GetChangedRoot();

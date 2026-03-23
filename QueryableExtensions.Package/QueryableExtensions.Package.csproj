@@ -11,7 +11,7 @@
         <PackageId>RippLib.Readability.EFExtensions</PackageId>
         <Description>Async Entity Framework extension methods for RippLib.Readability — wrapping AnyAsync() with readable alternatives like NotEmptyAsync(), EmptyAsync(), ContainsAnyAsync() and ContainsNoneAsync(). Includes Roslyn analyzers and code fixes.</Description>
         <Copyright>Ben Luts</Copyright>
-        <PackageLicense>https://github.com/BenLuts/RippLib.Readability/blob/master/LICENSE</PackageLicense>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageProjectUrl>https://github.com/BenLuts/RippLib.Readability</PackageProjectUrl>
         <RepositoryUrl>https://github.com/BenLuts/RippLib.Readability</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
@@ -37,6 +37,7 @@
 
         <None Include="..\Analyzers\Analyzers\bin\Release\netstandard2.0\Analyzers.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
         <None Include="..\Analyzers\Analyzers.CodeFixes\bin\Release\netstandard2.0\Analyzers.CodeFixes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="..\LICENSE" Pack="true" PackagePath="" />
     </ItemGroup>
 
 </Project>

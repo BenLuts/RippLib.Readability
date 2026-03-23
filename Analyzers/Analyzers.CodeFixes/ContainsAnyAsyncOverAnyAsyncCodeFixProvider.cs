@@ -45,19 +45,34 @@ public class ContainsAnyAsyncOverAnyAsyncCodeFixProvider : CodeFixProvider
     {
         var editor = await DocumentEditor.CreateAsync(document, cancellationToken);
 
+        // Detect invocation style and extract queryable expression
+        ExpressionSyntax queryableExpression;
+        ArgumentListSyntax newArgumentList;
         if (anyAsyncInvocation.Expression is MemberAccessExpressionSyntax memberAccess)
         {
-            var containsAnyAsyncAccess = SyntaxFactory.MemberAccessExpression(
-                SyntaxKind.SimpleMemberAccessExpression,
-                memberAccess.Expression,
-                SyntaxFactory.IdentifierName("ContainsAnyAsync"));
-
-            var containsAnyAsyncInvocation = SyntaxFactory.InvocationExpression(
-                containsAnyAsyncAccess,
-                anyAsyncInvocation.ArgumentList);
-
-            editor.ReplaceNode(anyAsyncInvocation, containsAnyAsyncInvocation);
+            // Reduced extension form: query.AnyAsync(...)
+            queryableExpression = memberAccess.Expression;
+            newArgumentList = anyAsyncInvocation.ArgumentList;
         }
+        else
+        {
+            // Static form: EntityFrameworkQueryableExtensions.AnyAsync(query, ...)
+            var args = anyAsyncInvocation.ArgumentList.Arguments;
+            queryableExpression = args[0].Expression;
+            newArgumentList = anyAsyncInvocation.ArgumentList.WithArguments(
+                SyntaxFactory.SeparatedList(args.Skip(1)));
+        }
+
+        var containsAnyAsyncAccess = SyntaxFactory.MemberAccessExpression(
+            SyntaxKind.SimpleMemberAccessExpression,
+            queryableExpression,
+            SyntaxFactory.IdentifierName("ContainsAnyAsync"));
+
+        var containsAnyAsyncInvocation = SyntaxFactory.InvocationExpression(
+            containsAnyAsyncAccess,
+            newArgumentList);
+
+        editor.ReplaceNode(anyAsyncInvocation, containsAnyAsyncInvocation);
 
         var changedRoot = editor.GetChangedRoot();
 

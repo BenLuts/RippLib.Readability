@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.CSharp;
@@ -50,9 +51,19 @@ public class ContainsNoneAsyncOverNotAnyAsync : DiagnosticAnalyzer
             methodSymbol.ContainingType?.Name != "EntityFrameworkQueryableExtensions")
             return;
 
-        // Only match the predicate overload: AnyAsync(predicate, CancellationToken)
-        if (methodSymbol.Parameters.Length < 2 ||
-            methodSymbol.Parameters[methodSymbol.Parameters.Length - 1].Type.Name != "CancellationToken")
+        // Normalize to static-form parameter list regardless of call style
+        var baseMethod = methodSymbol.ReducedFrom ?? methodSymbol;
+        var parameters = baseMethod.Parameters;
+
+        // Must have a predicate parameter (Expression<...>) to avoid false positives on AnyAsync(source, ct)
+        var hasPredicateParameter = parameters.Any(p =>
+            p.Type.ToDisplayString().Contains("System.Linq.Expressions.Expression"));
+        if (!hasPredicateParameter)
+            return;
+
+        // Must end with a CancellationToken parameter
+        if (parameters.Length < 2 ||
+            parameters[parameters.Length - 1].Type.Name != "CancellationToken")
             return;
 
         if (!IsNegatedAnyAsync(invocationExpr))
