@@ -15,6 +15,36 @@ Agent Masterchief initialized as C# Specialist.
 
 Initial setup complete.
 
+### 2026-03-25 — IQueryable Analyzer Gating Fix
+
+**Bug:** The four async analyzers (RLANY003–RLANY006) were firing unconditionally on any `AnyAsync()` call from EF Core, even in projects that did not reference the companion `RippLib.Readability.EFExtensions` / `QueryableExtensions` package. There was nothing to suggest those methods as alternatives.
+
+**Root cause:** All four analyzers registered their `SyntaxNodeAction` directly in `Initialize()`, with no check for whether the replacement types were available in the consuming project's compilation.
+
+**Fix — the gating pattern:**
+```csharp
+private const string CompanionTypeName = "RippLib.Readability.EFExtensions.QueryableExtensions";
+
+public override void Initialize(AnalysisContext context)
+{
+    context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+    context.EnableConcurrentExecution();
+    context.RegisterCompilationStartAction(compilationContext =>
+    {
+        if (compilationContext.Compilation.GetTypeByMetadataName(CompanionTypeName) is null)
+            return;
+
+        compilationContext.RegisterSyntaxNodeAction(AnalyzeInvocation, SyntaxKind.InvocationExpression);
+    });
+}
+```
+
+**Presence check used:** `compilation.GetTypeByMetadataName("RippLib.Readability.EFExtensions.QueryableExtensions")` — resolves the primary static extension class from the companion assembly. Returns `null` when the package is absent.
+
+**Affected analyzers:** `NotEmptyAsyncOverAnyAsync`, `EmptyAsyncOverNotAnyAsync`, `ContainsAnyAsyncOverAnyAsync`, `ContainsNoneAsyncOverNotAnyAsync`.
+
+**Tests updated:** All four test classes — `Triggers*` tests now include `AddRippLibReadabilityEFReference()` so the companion type is present in the test compilation. Each class gained a `DoesNotTriggerWhenCompanionPackageAbsent` test. Result: 45 tests pass (was 41) across net8/9/10.
+
 ### 2026-03-24 — .sln → .slnx Migration
 
 Ran `dotnet sln migrate` to produce `RippLib.Readability.slnx`. Key gotchas:
