@@ -15,6 +15,14 @@ Agent Masterchief initialized as C# Specialist.
 
 Initial setup complete.
 
+### 2026-03-24 — .sln → .slnx Migration
+
+Ran `dotnet sln migrate` to produce `RippLib.Readability.slnx`. Key gotchas:
+- The migrate command does **not** delete the old `.sln` — must be removed manually afterwards.
+- `RippLib.Readability.sln.DotSettings.user` was a Rider/ReSharper artefact tied to the old `.sln`; deleted alongside it.
+- The `.slnx` format is clean XML (`<Solution>` root) with explicit `<Configurations>`, `<Folder>`, and `<Project>` nodes — far more readable than the legacy `.sln` guid soup.
+- Build: 0 errors, 0 warnings both immediately after migration and after restoring packages from scratch.
+
 
 ### 2026-03-23 — Copilot PR Review Fixes
 

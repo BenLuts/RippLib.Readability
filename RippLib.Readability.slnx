@@ -1,0 +1,29 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Analyzers/" />
+  <Folder Name="/CodeAnalyzers/">
+    <Project Path="Analyzers/Analyzers.CodeFixes/Analyzers.CodeFixes.csproj" />
+    <Project Path="Analyzers/Analyzers.Test/Analyzers.Test.csproj" />
+    <Project Path="Analyzers/Analyzers.Vsix/Analyzers.Vsix.csproj" />
+    <Project Path="Analyzers/Analyzers/Analyzers.csproj" />
+  </Folder>
+  <Folder Name="/Enumerable/">
+    <Project Path="Package/Package.csproj" />
+    <Project Path="RippLib.Readability.Tests/Tests.csproj" />
+    <Project Path="RippLib.Readability/Extensions.csproj" />
+  </Folder>
+  <Folder Name="/IQueryable/">
+    <Project Path="QueryableExtensions.Package/QueryableExtensions.Package.csproj" />
+    <Project Path="QueryableExtensions.Tests/QueryableExtensions.Tests.csproj" />
+    <Project Path="QueryableExtensions/QueryableExtensions.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".github/workflows/release.yml" />
+    <File Path="Directory.Build.Targets" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+</Solution>

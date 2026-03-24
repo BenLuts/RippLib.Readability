@@ -15,6 +15,15 @@ Agent Forge initialized as GitHub Actions Specialist.
 
 Initial setup complete.
 
+### 2026-03-24 — .slnx pipeline compatibility audit
+
+- `.slnx` format (the new XML solution format replacing `.sln`) requires .NET 9+ SDK for auto-discovery. `dotnet restore/build/test` without an explicit path relies on the SDK scanning the working directory; the `.slnx` file is only recognized if the active SDK is 9.0 or newer.
+- `pr.yml` had no `actions/setup-dotnet` step — it relied entirely on whatever SDK the GitHub-hosted runner had pre-installed. This was harmless with `.sln` (SDK 6+ handles `.sln`), but becomes a latent risk with `.slnx` if runner images are ever downgraded or reset.
+- **Fix applied:** Added `actions/setup-dotnet@v4` with `8.0.x / 9.0.x / 10.0.x` to both jobs in `pr.yml`, matching the SDK matrix already used in `release.yml`. The last SDK listed (`10.0.x`) becomes the active global SDK.
+- `release.yml` was already safe — it had `setup-dotnet` with `10.0.x` as the top-of-stack SDK.
+- `squad-heartbeat.yml`, `squad-triage.yml`, `squad-issue-assign.yml`, `sync-squad-labels.yml` — no dotnet commands; zero impact from `.slnx` migration.
+- No workflow referenced `RippLib.Readability.sln` by explicit path. No `*.sln` glob patterns existed. Only the missing SDK pin was a real issue.
+
 ### 2026-03-23 — CI split for mixed OS test requirements
 
 - A solution can have test projects with conflicting OS requirements (Windows for .NET Framework TFMs, Linux for Testcontainers Docker). A single-runner workflow cannot satisfy both.
