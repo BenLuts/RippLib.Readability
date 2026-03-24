@@ -23,6 +23,7 @@ public class EmptyOverNotAnyTest
             }";
 
         await new ProjectBuilder()
+            .AddRippLibReadabilityReference()
             .WithAnalyzer<EmptyOverNotAny>()
             .WithSourceCode(test)
             .ShouldReportDiagnostic()
@@ -48,6 +49,7 @@ public class EmptyOverNotAnyTest
             }";
 
         await new ProjectBuilder()
+            .AddRippLibReadabilityReference()
              .WithAnalyzer<EmptyOverNotAny>()
              .WithSourceCode(test)
              .ShouldReportDiagnostic()
@@ -74,9 +76,33 @@ public class EmptyOverNotAnyTest
             }";
 
         await new ProjectBuilder()
+            .AddRippLibReadabilityReference()
             .WithAnalyzer<EmptyOverNotAny>()
             .WithSourceCode(test)
             .ShouldReportDiagnostic()
+            .ValidateAsync();
+    }
+
+    [Fact]
+    public async Task DoesNotTriggerWhenMainPackageAbsent()
+    {
+        var test = @"
+            using System.Linq;
+
+            class C
+            {
+                void M()
+                {
+                    var numbers = new[] { 1, 2, 3 };
+                    if (!numbers.Any())
+                    {
+                    }
+                }
+            }";
+
+        await new ProjectBuilder()
+            .WithAnalyzer<EmptyOverNotAny>()
+            .WithSourceCode(test)
             .ValidateAsync();
     }
 

@@ -48,6 +48,40 @@ Both run in parallel; both must pass. Windows job uses `--filter "FullyQualified
 
 ---
 
+### 5. Gate IQueryable Analyzers on Companion Package Presence
+
+**Date:** 2026-03-25  
+**Author:** Masterchief (C# Specialist)  
+**Status:** Implemented
+
+**Context:** The `RippLib.Readability.EFExtensions` package ships both `QueryableExtensions.dll` (the EF Core extension methods) and `Analyzers.dll` (Roslyn analyzers suggesting their use). When the main `RippLib.Readability` package also ships the analyzer assembly (both reference the `Analyzers` project), projects that reference only `RippLib.Readability` without the EF extensions companion still see analyzer warnings pointing to methods that don't exist in their compilation.
+
+**Problem:** The four async analyzers (`RLANY003`–`RLANY006`) registered their `SyntaxNodeAction` unconditionally in `Initialize()` with no check for companion type availability.
+
+**Decision:** Gate each async analyzer on the presence of `RippLib.Readability.EFExtensions.QueryableExtensions` in the consuming compilation using `RegisterCompilationStartAction` + `GetTypeByMetadataName`.
+
+**Implementation:**
+```csharp
+context.RegisterCompilationStartAction(compilationContext =>
+{
+    if (compilationContext.Compilation.GetTypeByMetadataName(
+            "RippLib.Readability.EFExtensions.QueryableExtensions") is null)
+        return;
+    
+    compilationContext.RegisterSyntaxNodeAction(AnalyzeInvocation, SyntaxKind.InvocationExpression);
+});
+```
+
+**Consequences:**
+- Correct behavior: Async analyzers only fire when replacement methods are guaranteed to exist
+- Zero noise for non-EF projects
+- All four test classes updated to include `AddRippLibReadabilityEFReference()` and new `DoesNotTriggerWhenCompanionPackageAbsent` tests
+- 45/45 tests pass (net8.0, net9.0, net10.0)
+
+**Skill documented:** `.squad/skills/roslyn-package-gating/SKILL.md` for reuse on future multi-delivery analyzer scenarios.
+
+---
+
 ## Archived Decisions (Inbox → Merged)
 
 ### 3. Fixed All 15 Copilot PR Review Comments

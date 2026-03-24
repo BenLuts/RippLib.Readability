@@ -42,6 +42,7 @@ public class ContainsAnyAsyncOverAnyAsyncTest
         await new ProjectBuilder()
             .WithTargetFramework(_targetFramework)
             .AddEntityFramework()
+            .AddRippLibReadabilityEFReference()
             .WithAnalyzer<ContainsAnyAsyncOverAnyAsync>()
             .WithSourceCode(test)
             .ShouldReportDiagnostic()
@@ -70,9 +71,36 @@ public class ContainsAnyAsyncOverAnyAsyncTest
         await new ProjectBuilder()
             .WithTargetFramework(_targetFramework)
             .AddEntityFramework()
+            .AddRippLibReadabilityEFReference()
             .WithAnalyzer<ContainsAnyAsyncOverAnyAsync>()
             .WithSourceCode(test)
             .ShouldReportDiagnostic()
+            .ValidateAsync();
+    }
+
+    [Fact]
+    public async Task DoesNotTriggerWhenCompanionPackageAbsent()
+    {
+        var test = @"
+            using System.Threading.Tasks;
+            using System.Linq;
+            using Microsoft.EntityFrameworkCore;
+
+            class C
+            {
+                async Task M(IQueryable<int> query)
+                {
+                    if (await query.AnyAsync(x => x > 0))
+                    {
+                    }
+                }
+            }";
+
+        await new ProjectBuilder()
+            .WithTargetFramework(_targetFramework)
+            .AddEntityFramework()
+            .WithAnalyzer<ContainsAnyAsyncOverAnyAsync>()
+            .WithSourceCode(test)
             .ValidateAsync();
     }
 
