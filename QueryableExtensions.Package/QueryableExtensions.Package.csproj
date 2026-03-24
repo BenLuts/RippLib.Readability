@@ -4,9 +4,9 @@
         <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
         <LangVersion>Latest</LangVersion>
         <RootNamespace>RippLib.Readability.EFExtensions</RootNamespace>
-        <AssemblyVersion>0.0.0.3</AssemblyVersion>
-        <FileVersion>0.0.0.3</FileVersion>
-        <Version>0.0.0.3</Version>
+        <AssemblyVersion>0.0.0.2</AssemblyVersion>
+        <FileVersion>0.0.0.2</FileVersion>
+        <Version>0.0.0.2</Version>
         <Authors>Ben Luts</Authors>
         <PackageId>RippLib.Readability.EFExtensions</PackageId>
         <Description>Async Entity Framework extension methods for RippLib.Readability — wrapping AnyAsync() with readable alternatives like NotEmptyAsync(), EmptyAsync(), ContainsAnyAsync() and ContainsNoneAsync(). Includes Roslyn analyzers and code fixes.</Description>
