@@ -15,6 +15,71 @@ Agent Masterchief initialized as C# Specialist.
 
 Initial setup complete.
 
+### 2026-03-25 — NuGet README Wiring
+
+**Change:** Added `<PackageReadmeFile>` to both NuGet package projects and wired in the README files as pack items.
+
+**Pattern used:**
+- In `PropertyGroup`: `<PackageReadmeFile>README.md</PackageReadmeFile>`
+- In the pack `ItemGroup`: `<None Include="path\to\README.md" Pack="true" PackagePath="" />`
+- `PackagePath=""` places the file at the NuGet package root, which is required by NuGet for README display.
+
+**Files changed:**
+- `Package\Package.csproj` — references `<None Include="..\README.md" .../>` (root README.md, shared)
+- `QueryableExtensions.Package\QueryableExtensions.Package.csproj` — references `<None Include="README.md" .../>` (package-local README)
+- `QueryableExtensions.Package\README.md` — created, documents all four async methods and Roslyn analyzer gating
+
+**Build result:** 0 errors, 0 warnings.
+
+---
+
+### 2026-03-25 — Version Bump for Analyzer Gating Fix
+
+**Change:** Bumped both NuGet packages following the RLANY003–RLANY006 companion-package gating fix.
+
+- `RippLib.Readability` (`Package\Package.csproj`): `0.0.0.11` → `0.0.0.12`
+- `RippLib.Readability.EFExtensions` (`QueryableExtensions.Package\QueryableExtensions.Package.csproj`): `0.0.0.1` → `0.0.0.2`
+
+**Why both?** Both package `.csproj` files include `Analyzers\Analyzers\bin\Release\netstandard2.0\Analyzers.dll` and `Analyzers.CodeFixes.dll` directly in their `<ItemGroup>`. The Roslyn.Analyzers fix ships inside that DLL, so every consumer of either package needs the corrected binary.
+
+**Build result:** `dotnet build --configuration Release` — 0 errors, 0 warnings.
+
+---
+
+### 2026-03-25 — IEnumerable Analyzer Gating Fix
+
+**Bug:** The two IEnumerable analyzers (`RLANY001` — `NotEmptyOverAny`, `RLANY002` — `EmptyOverNotAny`) were firing unconditionally on any `.Any()` call, even in projects that referenced only `RippLib.Readability.EFExtensions` without the main `RippLib.Readability` package. Since both packages ship the same `Analyzers.dll`, EFExtensions-only users saw IEnumerable diagnostics pointing to types that were not available in their compilation.
+
+**Root cause:** Both analyzers registered `SyntaxNodeAction` directly in `Initialize()` with no check for whether the replacement types (`NotEmpty()`, `Empty()`) were reachable in the compilation.
+
+**Fix — the gating pattern (same as RLANY003–RLANY006):**
+```csharp
+private const string MainPackageTypeName = "RippLib.Readability.EnumerableExtensions";
+
+public override void Initialize(AnalysisContext context)
+{
+    context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+    context.EnableConcurrentExecution();
+    context.RegisterCompilationStartAction(compilationContext =>
+    {
+        if (compilationContext.Compilation.GetTypeByMetadataName(MainPackageTypeName) is null)
+            return;
+
+        compilationContext.RegisterSyntaxNodeAction(AnalyzeInvocation, SyntaxKind.InvocationExpression);
+    });
+}
+```
+
+**Presence check used:** `compilation.GetTypeByMetadataName("RippLib.Readability.EnumerableExtensions")` — the primary static extension class from the main `RippLib.Readability` assembly.
+
+**Affected analyzers:** `NotEmptyOverAny`, `EmptyOverNotAny`.
+
+**Tests updated:** Both test classes — all `Triggers*` / positive tests now include `AddRippLibReadabilityReference()`. Each class gained a `DoesNotTriggerWhenMainPackageAbsent` test. Result: 47 tests pass per TFM (net8/9/10) — up from 45.
+
+**Structural difference vs IQueryable gate:** The IQueryable gate checked for a type in a *companion* package (`EFExtensions.QueryableExtensions`); this gate checks for a type in the *owning* package itself (`RippLib.Readability.EnumerableExtensions`). The mechanism is identical — only the direction of the dependency differs.
+
+---
+
 ### 2026-03-25 — IQueryable Analyzer Gating Fix
 
 **Bug:** The four async analyzers (RLANY003–RLANY006) were firing unconditionally on any `AnyAsync()` call from EF Core, even in projects that did not reference the companion `RippLib.Readability.EFExtensions` / `QueryableExtensions` package. There was nothing to suggest those methods as alternatives.

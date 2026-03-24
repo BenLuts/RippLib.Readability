@@ -84,6 +84,13 @@ public async Task DoesNotTriggerWhenCompanionPackageAbsent()
 
 ## Applied In This Repo
 
-Used to gate `RLANY003`–`RLANY006` (the four async EF Core analyzers) on the presence of `RippLib.Readability.EFExtensions.QueryableExtensions`.
+Used to gate:
+- `RLANY003`–`RLANY006` (the four async EF Core analyzers) on the presence of `RippLib.Readability.EFExtensions.QueryableExtensions` (companion package gate — gate on what you *suggest*, not what you're *in*).
+- `RLANY001`–`RLANY002` (the two IEnumerable analyzers) on the presence of `RippLib.Readability.EnumerableExtensions` (owning package gate — gate on the package that *delivers* you).
 
-See: `Analyzers/Analyzers/NotEmptyAsyncOverAnyAsync.cs` et al.
+See: `Analyzers/Analyzers/NotEmptyAsyncOverAnyAsync.cs`, `NotEmptyOverAny.cs`, `EmptyOverNotAny.cs` et al.
+
+## Confidence
+
+`medium` — pattern applied twice successfully to two independent analyzer sets in this repo (IQueryable/EF and IEnumerable/main package). Mechanism is identical regardless of direction (companion vs owning).
+

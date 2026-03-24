@@ -28,11 +28,19 @@ public class NotEmptyOverAny : DiagnosticAnalyzer
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => [_rule];
 
+    private const string MainPackageTypeName = "RippLib.Readability.EnumerableExtensions";
+
     public override void Initialize(AnalysisContext context)
     {
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
-        context.RegisterSyntaxNodeAction(AnalyzeInvocation, SyntaxKind.InvocationExpression);
+        context.RegisterCompilationStartAction(compilationContext =>
+        {
+            if (compilationContext.Compilation.GetTypeByMetadataName(MainPackageTypeName) is null)
+                return;
+
+            compilationContext.RegisterSyntaxNodeAction(AnalyzeInvocation, SyntaxKind.InvocationExpression);
+        });
     }
 
     private static void AnalyzeInvocation(SyntaxNodeAnalysisContext context)
